@@ -58,8 +58,8 @@ function LocationSelector({
   value, 
   onChange 
 }: { 
-  label: string; 
-  icon: any; 
+  label?: string; 
+  icon?: any; 
   value: { province: string; district: string; ward: string };
   onChange: (val: { province: string; district: string; ward: string }) => void;
 }) {
@@ -70,9 +70,11 @@ function LocationSelector({
 
   return (
     <div className="space-y-3">
-      <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1 flex items-center gap-2">
-        <Icon size={14} className="text-red-600" /> {label}
-      </label>
+      {label && (
+        <label className="block text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1 flex items-center gap-2">
+          {Icon && <Icon size={12} className="text-red-600" />} {label}
+        </label>
+      )}
       
       <div className="grid grid-cols-1 gap-3">
         {/* Tỉnh/Thành */}
@@ -92,7 +94,7 @@ function LocationSelector({
                 onChange({ province: val, district: '', ward: '' });
               }
             }}
-            className="w-full pl-4 pr-10 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl text-sm font-bold text-slate-700 focus:ring-4 focus:ring-red-500/5 focus:border-red-500 focus:bg-white outline-none appearance-none transition-all"
+            className="w-full pl-4 pr-8 py-4 bg-[#f7fafc] border border-slate-100 rounded-2xl text-sm font-bold text-slate-700 focus:ring-4 focus:ring-red-500/5 focus:border-red-500 focus:bg-white outline-none appearance-none transition-all"
           >
             <option value="">Chọn Tỉnh/Thành</option>
             {locations.map(p => <option key={p.name} value={p.name}>{p.name}</option>)}
@@ -108,7 +110,7 @@ function LocationSelector({
                 value={value.district}
                 disabled={!value.province}
                 onChange={(e) => onChange({ ...value, district: e.target.value, ward: '' })}
-                className="w-full pl-4 pr-10 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl text-sm font-bold text-slate-700 focus:ring-4 focus:ring-red-500/5 focus:border-red-500 focus:bg-white outline-none appearance-none transition-all disabled:opacity-50"
+                className="w-full pl-4 pr-8 py-4 bg-[#f7fafc] border border-slate-100 rounded-2xl text-sm font-bold text-slate-700 focus:ring-4 focus:ring-red-500/5 focus:border-red-500 focus:bg-white outline-none appearance-none transition-all disabled:opacity-50"
               >
                 <option value="">Quận/Huyện</option>
                 {selectedProvince?.districts.map(d => <option key={d.name} value={d.name}>{d.name}</option>)}
@@ -122,7 +124,7 @@ function LocationSelector({
                 value={value.ward}
                 disabled={!value.district}
                 onChange={(e) => onChange({ ...value, ward: e.target.value })}
-                className="w-full pl-4 pr-10 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl text-sm font-bold text-slate-700 focus:ring-4 focus:ring-red-500/5 focus:border-red-500 focus:bg-white outline-none appearance-none transition-all disabled:opacity-50"
+                className="w-full pl-4 pr-8 py-4 bg-[#f7fafc] border border-slate-100 rounded-2xl text-sm font-bold text-slate-700 focus:ring-4 focus:ring-red-500/5 focus:border-red-500 focus:bg-white outline-none appearance-none transition-all disabled:opacity-50"
               >
                 <option value="">Phường/Xã</option>
                 {selectedDistrict?.wards.map(w => <option key={w} value={w}>{w}</option>)}
@@ -356,19 +358,19 @@ export default function App() {
       {/* Header */}
       <header 
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-          isScrolled ? 'bg-white shadow-md py-2' : 'bg-white/90 backdrop-blur-sm py-4'
+          isScrolled ? 'bg-white shadow-md py-1.5' : 'bg-white/90 backdrop-blur-sm py-2'
         }`}
       >
         <div className="container mx-auto px-4 flex justify-between items-center">
           <div className="flex items-center gap-2">
-            <div className="bg-red-600 p-1.5 rounded-lg">
-              <Car className="text-white w-6 h-6" />
+            <div className="bg-red-600 p-1 rounded-lg">
+              <Car className="text-white w-5 h-5" />
             </div>
             <div>
-              <h1 className="text-xl md:text-2xl font-extrabold tracking-tighter text-slate-900 leading-none">
+              <h1 className="text-lg md:text-xl font-extrabold tracking-tighter text-slate-900 leading-none">
                 NGUYỄN VY
               </h1>
-              <p className="text-[10px] font-bold text-red-600 tracking-widest uppercase">Luxury Service</p>
+              <p className="text-[8px] font-bold text-red-600 tracking-widest uppercase">Luxury Service</p>
             </div>
           </div>
 
@@ -437,92 +439,99 @@ export default function App() {
 
       <main>
         {/* Hero Section */}
-        <section className="relative min-h-screen flex items-center pt-20 overflow-hidden bg-slate-50">
-          {/* Background Image with brighter overlay */}
+        <section className="relative pt-16 pb-20 overflow-hidden bg-[#f8fafc]">
+          {/* Background Image with subtle overlay */}
           <div className="absolute inset-0 z-0">
             <img 
               src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&q=80&w=1920" 
               alt="Luxury Car" 
-              className="w-full h-full object-cover opacity-40"
+              className="w-full h-full object-cover opacity-[0.07] grayscale"
               referrerPolicy="no-referrer"
             />
-            <div className="absolute inset-0 bg-gradient-to-b from-white/80 via-white/40 to-slate-50"></div>
           </div>
 
           <div className="container mx-auto px-4 relative z-10">
-            <div className="text-center max-w-4xl mx-auto mb-12">
+            <div className="text-center max-w-4xl mx-auto mb-16">
               {/* Hero Text */}
               <motion.div
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8 }}
               >
-                <span className="inline-block px-4 py-1.5 bg-red-50 text-red-600 text-xs font-black uppercase tracking-[0.3em] rounded-full mb-6">
-                  Nguyễn Vy Luxury
-                </span>
-                <h2 className="text-4xl md:text-6xl lg:text-7xl font-black text-slate-900 leading-[1.1] tracking-tight mb-6">
-                  Dịch Vụ Xe <span className="text-red-600 italic">Hạng Sang</span> <br />
+                <h2 className="text-4xl md:text-6xl font-black text-[#1a202c] leading-[1.1] tracking-tight mb-6">
+                  Dịch Vụ Xe <span className="text-[#ff0000] italic">Hạng Sang</span><br />
                   Giá Bình Dân
                 </h2>
-                <p className="text-lg text-slate-600 max-w-2xl mx-auto font-medium leading-relaxed">
-                  Trải nghiệm hành trình đẳng cấp với đội ngũ tài xế chuyên nghiệp. 
-                  Cam kết giá tốt nhất thị trường, phục vụ 24/7.
+                <p className="text-sm md:text-lg text-slate-500 max-w-2xl mx-auto leading-relaxed font-medium">
+                  Trải nghiệm hành trình đẳng cấp với đội ngũ tài xế chuyên nghiệp. Cam kết<br className="hidden md:block" /> giá tốt nhất thị trường, phục vụ 24/7.
                 </p>
               </motion.div>
             </div>
 
-            <div className="flex flex-col lg:flex-row items-start justify-center gap-8 lg:gap-12 max-w-6xl mx-auto">
+            <div className="flex flex-col lg:flex-row items-stretch justify-center gap-6 lg:gap-8 max-w-6xl mx-auto">
               {/* Booking Form */}
               <motion.div 
                 id="booking"
                 initial={{ opacity: 0, x: -30 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.8, delay: 0.2 }}
-                className="bg-white rounded-[2.5rem] shadow-[0_32px_64px_-16px_rgba(0,0,0,0.15)] p-8 md:p-10 w-full lg:w-1/2 border border-white relative"
+                className="bg-white rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.1)] p-6 md:p-10 w-full lg:w-1/2 border border-slate-50 relative"
               >
-                <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-red-600 text-white px-6 py-2 rounded-full text-xs font-black uppercase tracking-widest shadow-lg z-10">
-                  Báo giá tự động 24/7
+                <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-[#ff0000] text-white px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-widest shadow-xl z-10 whitespace-nowrap">
+                  BÁO GIÁ TỰ ĐỘNG 24/7
                 </div>
 
                 <div className="mb-8 text-center">
-                  <h3 className="text-2xl font-black text-slate-900 flex items-center justify-center gap-3 tracking-tight">
-                    <div className="bg-red-600 p-2 rounded-xl">
+                  <div className="flex flex-col items-center gap-3">
+                    <div className="bg-[#ff0000] p-3 rounded-2xl shadow-lg shadow-red-200">
                       <Car className="text-white w-6 h-6" />
                     </div>
-                    Báo Giá Nhanh
-                  </h3>
-                  <p className="text-slate-500 text-sm mt-2 font-medium">Nhập thông tin để nhận báo giá chính xác nhất</p>
+                    <h3 className="text-2xl font-black text-[#1a202c] tracking-tight">
+                      Báo Giá Nhanh
+                    </h3>
+                    <p className="text-xs text-slate-400 font-medium">Nhập thông tin để nhận báo giá chính xác nhất</p>
+                  </div>
                 </div>
                 
-                <form className="space-y-5" onSubmit={(e) => e.preventDefault()}>
+                <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
                   <div>
-                    <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">Số điện thoại liên hệ</label>
+                    <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">SỐ ĐIỆN THOẠI LIÊN HỆ</label>
                     <div className="relative group">
-                      <Phone className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-red-500 transition-colors w-5 h-5" />
+                      <Phone className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-red-500 transition-colors w-4 h-4" />
                       <input 
                         type="tel" 
                         value={phone}
                         onChange={(e) => setPhone(e.target.value)}
                         placeholder="09xx xxx xxx"
-                        className="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-red-500/5 focus:border-red-500 focus:bg-white transition-all font-bold text-slate-900 placeholder:text-slate-300"
+                        className="w-full pl-12 pr-4 py-4 bg-[#f7fafc] border border-slate-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-red-500/5 focus:border-red-500 focus:bg-white transition-all font-bold text-base text-slate-900 placeholder:text-slate-300"
                       />
                     </div>
                   </div>
 
-                  <div className="space-y-5">
-                    <LocationSelector 
-                      label="Điểm đón khách" 
-                      icon={MapPin} 
-                      value={pickup}
-                      onChange={setPickup}
-                    />
+                  <div className="space-y-6">
+                    <div className="space-y-2">
+                      <label className="block text-[10px] font-black text-red-500 uppercase tracking-widest mb-2 ml-1 flex items-center gap-2">
+                        <MapPin size={14} /> ĐIỂM ĐÓN KHÁCH
+                      </label>
+                      <LocationSelector 
+                        label="" 
+                        icon={null} 
+                        value={pickup}
+                        onChange={setPickup}
+                      />
+                    </div>
                     
-                    <LocationSelector 
-                      label="Điểm đến dự kiến" 
-                      icon={Search} 
-                      value={destination}
-                      onChange={setDestination}
-                    />
+                    <div className="space-y-2">
+                      <label className="block text-[10px] font-black text-red-500 uppercase tracking-widest mb-2 ml-1 flex items-center gap-2">
+                        <Search size={14} /> ĐIỂM ĐẾN DỰ KIẾN
+                      </label>
+                      <LocationSelector 
+                        label="" 
+                        icon={null} 
+                        value={destination}
+                        onChange={setDestination}
+                      />
+                    </div>
                   </div>
                 </form>
 
@@ -530,23 +539,23 @@ export default function App() {
                   type="button"
                   disabled={isLoading}
                   onClick={handleEstimate}
-                  className="w-full bg-red-600 hover:bg-red-700 disabled:bg-slate-300 text-white font-black py-5 rounded-2xl shadow-xl shadow-red-200 transition-all transform hover:-translate-y-1 active:scale-95 uppercase tracking-widest mt-8 mb-4 flex items-center justify-center gap-3"
+                  className="w-full bg-red-600 hover:bg-red-700 disabled:bg-slate-300 text-white font-black py-3.5 rounded-xl shadow-lg shadow-red-100 transition-all transform hover:-translate-y-0.5 active:scale-95 uppercase tracking-widest mt-4 flex items-center justify-center gap-2 text-[11px]"
                 >
                   {isLoading ? (
-                    <div className="w-6 h-6 border-3 border-white border-t-transparent rounded-full animate-spin"></div>
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                   ) : (
-                    <Search size={22} strokeWidth={3} />
+                    <Search size={16} strokeWidth={3} />
                   )}
-                  {isLoading ? 'Đang tính toán...' : 'XEM BÁO GIÁ NGAY'}
+                  {isLoading ? 'Đang tính...' : 'XEM BÁO GIÁ NGAY'}
                 </button>
 
                 {error && (
                   <motion.div 
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    className="p-4 bg-red-50 border border-red-100 text-red-600 text-xs rounded-xl font-bold flex items-center gap-2"
+                    className="mt-3 p-2.5 bg-red-50 border border-red-100 text-red-600 text-[9px] rounded-lg font-bold flex items-center gap-2"
                   >
-                    <div className="w-1.5 h-1.5 bg-red-600 rounded-full"></div>
+                    <div className="w-1 h-1 bg-red-600 rounded-full"></div>
                     {error}
                   </motion.div>
                 )}
@@ -555,53 +564,38 @@ export default function App() {
                   <motion.div 
                     initial={{ opacity: 0, height: 0 }}
                     animate={{ opacity: 1, height: 'auto' }}
-                    className="mt-6 bg-slate-50 rounded-2xl p-6 border border-slate-100 space-y-4"
+                    className="mt-3 bg-slate-50 rounded-xl p-3 border border-slate-100 space-y-2"
                   >
-                    <div className="space-y-3">
-                      <div className="flex flex-col">
-                        <span className="text-slate-400 font-black uppercase text-[9px] tracking-widest mb-1">Hành trình dự kiến:</span>
-                        <div className="flex items-start gap-2">
-                          <div className="mt-1 w-1.5 h-1.5 bg-red-600 rounded-full shrink-0"></div>
-                          <span className="text-sm font-bold text-slate-900">{pickup.ward}, {normalizeDistrictName(pickup.district)}</span>
-                        </div>
-                        <div className="ml-[3px] my-1 w-px h-3 bg-slate-200"></div>
-                        <div className="flex items-start gap-2">
-                          <div className="mt-1 w-1.5 h-1.5 bg-slate-400 rounded-full shrink-0"></div>
-                          <span className="text-sm font-bold text-slate-900">{destination.ward}, {normalizeDistrictName(destination.district)}</span>
-                        </div>
-                      </div>
-                      
-                      <div className="pt-4 border-t border-slate-200 flex flex-col gap-3">
-                        <div className="flex justify-between items-center">
-                          <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Quãng đường:</span>
-                          <span className="text-sm font-black text-slate-700">{calcResult.distance} km</span>
-                        </div>
-                        <div className="flex justify-between items-end">
-                          <span className="text-[10px] font-black text-red-600 uppercase tracking-widest mb-1">TỔNG THANH TOÁN:</span>
-                          <span className="text-3xl font-black text-red-600 tracking-tighter">{calcResult.roundedPrice.toLocaleString('vi-VN')}đ</span>
-                        </div>
-                      </div>
+                    <div className="flex justify-between items-center text-[9px] font-black text-slate-400 uppercase tracking-widest">
+                      <span>Quãng đường: {calcResult.distance} km</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-[9px] font-black text-red-600 uppercase tracking-widest">TỔNG CỘNG:</span>
+                      <span className="text-xl font-black text-red-600 tracking-tighter">{calcResult.roundedPrice.toLocaleString('vi-VN')}đ</span>
                     </div>
                     
-                    <button 
+                    <motion.button 
                       onClick={() => {
                         const message = `Chào Nguyễn Vy Luxury, tôi muốn đặt xe:\n- SĐT: ${phone}\n- Điểm đón: ${calcResult.pickup}\n- Điểm đến: ${calcResult.destination}\n- Quãng đường: ${calcResult.distance} km\n- TỔNG THANH TOÁN: ${calcResult.roundedPrice.toLocaleString('vi-VN')}đ`;
                         const encodedMessage = encodeURIComponent(message);
                         window.open(`https://zalo.me/0937243749?text=${encodedMessage}`, '_blank');
                       }}
-                      className="w-full bg-[#0068FF] hover:bg-[#005ae0] text-white text-xs font-black py-4 rounded-xl transition-all flex items-center justify-center gap-2 shadow-lg shadow-blue-100"
+                      animate={{ 
+                        backgroundColor: ["#0068FF", "#ff0000", "#0068FF"],
+                        x: [0, -2, 2, -2, 2, 0]
+                      }}
+                      transition={{ 
+                        duration: 1.5, 
+                        repeat: Infinity,
+                        repeatType: "loop"
+                      }}
+                      className="w-full text-white text-[11px] font-black py-2.5 rounded-lg transition-all flex items-center justify-center gap-2 shadow-lg"
                     >
-                      <ZaloIcon size={24} />
-                      ĐẶT XE QUA ZALO NGAY
-                    </button>
+                      <ZaloIcon size={18} />
+                      ĐẶT XE QUA ZALO 👈
+                    </motion.button>
                   </motion.div>
                 )}
-                
-                <div className="text-center text-[10px] text-slate-400 mt-6 font-bold flex items-center justify-center gap-2">
-                  <div className="w-1 h-1 bg-slate-300 rounded-full"></div>
-                  Cam kết không phát sinh chi phí
-                  <div className="w-1 h-1 bg-slate-300 rounded-full"></div>
-                </div>
               </motion.div>
 
               {/* Fixed Routes */}
@@ -609,66 +603,75 @@ export default function App() {
                 initial={{ opacity: 0, x: 30 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.8, delay: 0.3 }}
-                className="w-full lg:w-1/2 space-y-6"
+                className="w-full lg:w-1/2"
               >
-                <div className="bg-white rounded-[2.5rem] shadow-[0_32px_64px_-16px_rgba(0,0,0,0.1)] p-8 md:p-10 border border-white h-full">
+                <div className="bg-white rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.08)] p-6 md:p-10 border border-slate-50 h-full flex flex-col">
                   <div className="mb-8 text-center">
-                    <h3 className="text-2xl font-black text-red-600 flex items-center justify-center gap-3 tracking-tight uppercase">
-                      Tuyến Cố Định Giá Rẻ
+                    <h3 className="text-2xl font-black text-[#ff0000] tracking-tight uppercase mb-2">
+                      TUYẾN CỐ ĐỊNH GIÁ RẺ
                     </h3>
-                    <p className="text-slate-500 text-sm mt-2 font-medium">Các tuyến đường phổ biến với giá ưu đãi đặc biệt</p>
+                    <p className="text-xs text-slate-400 font-medium">Các tuyến đường phổ biến với giá ưu đãi đặc biệt</p>
                   </div>
 
-                  <div className="space-y-4">
+                  <div className="space-y-6 flex-grow">
                     {/* Route 1 */}
-                    <div className="bg-slate-50 p-6 rounded-3xl border border-slate-100 flex flex-col items-center gap-4 shadow-sm hover:shadow-md transition-all group">
-                      <div className="text-sm font-bold text-slate-900 flex items-center gap-3 bg-white px-4 py-2 rounded-full shadow-sm">
-                        Sài Gòn <span className="text-red-600 animate-pulse">➡️</span> Cần Thơ
+                    <div className="bg-[#f7fafc] p-6 rounded-[2rem] border border-slate-100 flex flex-col items-center gap-4 shadow-sm hover:shadow-md transition-all group">
+                      <div className="text-sm font-bold text-slate-900 flex items-center gap-3 bg-white px-5 py-2 rounded-full shadow-sm">
+                        Sài Gòn <span className="text-red-600 bg-red-50 p-1 rounded-md"><Car size={14} /></span> Cần Thơ
                       </div>
-                      <div className="flex flex-col items-center">
-                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Giá trọn gói</span>
-                        <div className="text-3xl font-black text-slate-900">1.400.000đ</div>
+                      <div className="text-center">
+                        <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">GIÁ TRỌN GÓI</div>
+                        <div className="text-3xl font-black text-[#1a202c]">1.400.000đ</div>
                       </div>
-                      <button 
+                      <motion.button 
                         onClick={() => {
                           const message = `Chào Nguyễn Vy Luxury, tôi muốn đặt xe tuyến cố định:\n- Lộ trình: Trung Tâm Sài Gòn ➡️ Trung Tâm Cần Thơ\n- Giá: 1.400.000đ`;
                           window.open(`https://zalo.me/0937243749?text=${encodeURIComponent(message)}`, '_blank');
                         }}
-                        className="w-full bg-red-600 text-white py-4 rounded-2xl font-black hover:bg-red-700 transition-all uppercase text-sm tracking-widest shadow-lg shadow-red-100 group-hover:scale-[1.02] active:scale-95"
+                        animate={{ 
+                          backgroundColor: ["#ff0000", "#cc0000", "#ff0000"],
+                          x: [0, -2, 2, -2, 2, 0],
+                          scale: [1, 1.02, 1]
+                        }}
+                        transition={{ 
+                          duration: 1.5, 
+                          repeat: Infinity,
+                          repeatType: "loop"
+                        }}
+                        className="w-full text-white py-4 rounded-2xl font-black hover:bg-red-700 transition-all uppercase text-xs tracking-widest shadow-lg shadow-red-100"
                       >
-                        " Book Xe "
-                      </button>
+                        " BOOK XE " 👈
+                      </motion.button>
                     </div>
 
                     {/* Route 2 */}
-                    <div className="bg-slate-50 p-6 rounded-3xl border border-slate-100 flex flex-col items-center gap-4 shadow-sm hover:shadow-md transition-all group">
-                      <div className="text-sm font-bold text-slate-900 flex items-center gap-3 bg-white px-4 py-2 rounded-full shadow-sm">
-                        Sài Gòn <span className="text-red-600 animate-pulse">➡️</span> Sóc Trăng
+                    <div className="bg-[#f7fafc] p-6 rounded-[2rem] border border-slate-100 flex flex-col items-center gap-4 shadow-sm hover:shadow-md transition-all group">
+                      <div className="text-sm font-bold text-slate-900 flex items-center gap-3 bg-white px-5 py-2 rounded-full shadow-sm">
+                        Sài Gòn <span className="text-red-600 bg-red-50 p-1 rounded-md"><Car size={14} /></span> Sóc Trăng
                       </div>
-                      <div className="flex flex-col items-center">
-                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Giá trọn gói</span>
-                        <div className="text-3xl font-black text-slate-900">1.800.000đ</div>
+                      <div className="text-center">
+                        <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">GIÁ TRỌN GÓI</div>
+                        <div className="text-3xl font-black text-[#1a202c]">1.800.000đ</div>
                       </div>
-                      <button 
+                      <motion.button 
                         onClick={() => {
                           const message = `Chào Nguyễn Vy Luxury, tôi muốn đặt xe tuyến cố định:\n- Lộ trình: Trung Tâm Sài Gòn ➡️ Trung Tâm Sóc Trăng\n- Giá: 1.800.000đ`;
                           window.open(`https://zalo.me/0937243749?text=${encodeURIComponent(message)}`, '_blank');
                         }}
-                        className="w-full bg-red-600 text-white py-4 rounded-2xl font-black hover:bg-red-700 transition-all uppercase text-sm tracking-widest shadow-lg shadow-red-100 group-hover:scale-[1.02] active:scale-95"
+                        animate={{ 
+                          backgroundColor: ["#ff0000", "#cc0000", "#ff0000"],
+                          x: [0, -2, 2, -2, 2, 0],
+                          scale: [1, 1.02, 1]
+                        }}
+                        transition={{ 
+                          duration: 1.5, 
+                          repeat: Infinity,
+                          repeatType: "loop"
+                        }}
+                        className="w-full text-white py-4 rounded-2xl font-black hover:bg-red-700 transition-all uppercase text-xs tracking-widest shadow-lg shadow-red-100"
                       >
-                        " Book Xe "
-                      </button>
-                    </div>
-                  </div>
-
-                  <div className="mt-8 flex justify-center gap-4">
-                    <div className="flex items-center gap-2 px-4 py-2 bg-slate-50 rounded-xl border border-slate-100">
-                      <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                      <span className="text-[10px] font-bold text-slate-700 uppercase tracking-widest">Sẵn sàng phục vụ</span>
-                    </div>
-                    <div className="flex items-center gap-2 px-4 py-2 bg-slate-50 rounded-xl border border-slate-100">
-                      <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
-                      <span className="text-[10px] font-bold text-slate-700 uppercase tracking-widest">4.9/5 Đánh giá</span>
+                        " BOOK XE " 👈
+                      </motion.button>
                     </div>
                   </div>
                 </div>
@@ -715,7 +718,7 @@ export default function App() {
                 <h1 className="text-2xl font-black tracking-tighter">NGUYỄN VY LUXURY</h1>
               </div>
               <p className="text-slate-400 text-sm leading-relaxed">
-                Dịch vụ cho thuê xe du lịch hàng đầu khu vực TP. Hồ Chí Minh và các tỉnh Miền Tây. 
+                Dịch vụ cho thuê xe du lịch hàng đầu khu vực HỒ CHÍ MINH - CẦN THƠ - SÓC TRĂNG & CÁC TỈNH MIỀN TÂY. 
                 Uy tín - Chất lượng - Tận tâm.
               </p>
             </div>
@@ -743,7 +746,7 @@ export default function App() {
                   <a href="https://line.me/ti/p/QeBK3LeCL6" target="_blank" className="hover:text-green-500 transition-colors">Line ID: Nguyễn Vy</a>
                 </li>
                 <li className="flex items-center gap-3">
-                  <MapPin size={18} className="text-red-500" /> TP. Hồ Chí Minh và các tỉnh Miền Tây
+                  <MapPin size={18} className="text-red-500" /> HỒ CHÍ MINH - CẦN THƠ - SÓC TRĂNG & CÁC TỈNH MIỀN TÂY
                 </li>
               </ul>
             </div>
