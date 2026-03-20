@@ -450,13 +450,12 @@ export default function App() {
           </div>
 
           <div className="container mx-auto px-4 relative z-10">
-            <div className="flex flex-col items-center text-center max-w-4xl mx-auto">
+            <div className="text-center max-w-4xl mx-auto mb-12">
               {/* Hero Text */}
               <motion.div
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8 }}
-                className="mb-10"
               >
                 <span className="inline-block px-4 py-1.5 bg-red-50 text-red-600 text-xs font-black uppercase tracking-[0.3em] rounded-full mb-6">
                   Nguyễn Vy Luxury
@@ -465,32 +464,23 @@ export default function App() {
                   Dịch Vụ Xe <span className="text-red-600 italic">Hạng Sang</span> <br />
                   Giá Bình Dân
                 </h2>
-                <p className="text-lg text-slate-600 max-w-2xl mx-auto mb-8 font-medium leading-relaxed">
+                <p className="text-lg text-slate-600 max-w-2xl mx-auto font-medium leading-relaxed">
                   Trải nghiệm hành trình đẳng cấp với đội ngũ tài xế chuyên nghiệp. 
                   Cam kết giá tốt nhất thị trường, phục vụ 24/7.
                 </p>
-
-                <div className="flex flex-wrap justify-center gap-4">
-                  <div className="flex items-center gap-2 px-4 py-2 bg-white rounded-xl shadow-sm border border-slate-100">
-                    <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                    <span className="text-xs font-bold text-slate-700">Sẵn sàng phục vụ</span>
-                  </div>
-                  <div className="flex items-center gap-2 px-4 py-2 bg-white rounded-xl shadow-sm border border-slate-100">
-                    <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
-                    <span className="text-xs font-bold text-slate-700">4.9/5 Đánh giá</span>
-                  </div>
-                </div>
               </motion.div>
+            </div>
 
+            <div className="flex flex-col lg:flex-row items-start justify-center gap-8 lg:gap-12 max-w-6xl mx-auto">
               {/* Booking Form */}
               <motion.div 
                 id="booking"
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
+                initial={{ opacity: 0, x: -30 }}
+                animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.8, delay: 0.2 }}
-                className="bg-white rounded-[2.5rem] shadow-[0_32px_64px_-16px_rgba(0,0,0,0.15)] p-8 md:p-10 max-w-xl w-full border border-white relative"
+                className="bg-white rounded-[2.5rem] shadow-[0_32px_64px_-16px_rgba(0,0,0,0.15)] p-8 md:p-10 w-full lg:w-1/2 border border-white relative"
               >
-                <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-red-600 text-white px-6 py-2 rounded-full text-xs font-black uppercase tracking-widest shadow-lg">
+                <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-red-600 text-white px-6 py-2 rounded-full text-xs font-black uppercase tracking-widest shadow-lg z-10">
                   Báo giá tự động 24/7
                 </div>
 
@@ -613,80 +603,81 @@ export default function App() {
                   <div className="w-1 h-1 bg-slate-300 rounded-full"></div>
                 </div>
               </motion.div>
-            </div>
-          </div>
-        </section>
 
-        {/* Fixed Routes Section */}
-        <section className="py-12 bg-white">
-          <div className="container mx-auto px-4">
-            <div className="max-w-4xl mx-auto text-center">
+              {/* Fixed Routes */}
               <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                className="mb-10"
+                initial={{ opacity: 0, x: 30 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.8, delay: 0.3 }}
+                className="w-full lg:w-1/2 space-y-6"
               >
-                <h2 className="text-2xl font-black text-red-600 uppercase tracking-[0.2em] mb-2">
-                  Tuyến cố định giá rẽ
-                </h2>
-                <div className="w-20 h-1 bg-red-600 mx-auto rounded-full"></div>
-              </motion.div>
-              
-              <div className="grid md:grid-cols-2 gap-8">
-                {/* Route 1 */}
-                <motion.div 
-                  initial={{ opacity: 0, x: -20 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  className="bg-slate-50 p-8 rounded-[2rem] border border-slate-100 flex flex-col items-center gap-5 shadow-sm hover:shadow-md transition-all group"
-                >
-                  <div className="text-sm font-bold text-slate-900 flex items-center gap-3 bg-white px-4 py-2 rounded-full shadow-sm">
-                    Sài Gòn <span className="text-red-600 animate-pulse">➡️</span> Cần Thơ
+                <div className="bg-white rounded-[2.5rem] shadow-[0_32px_64px_-16px_rgba(0,0,0,0.1)] p-8 md:p-10 border border-white h-full">
+                  <div className="mb-8 text-center">
+                    <h3 className="text-2xl font-black text-red-600 flex items-center justify-center gap-3 tracking-tight uppercase">
+                      Tuyến Cố Định Giá Rẻ
+                    </h3>
+                    <p className="text-slate-500 text-sm mt-2 font-medium">Các tuyến đường phổ biến với giá ưu đãi đặc biệt</p>
                   </div>
-                  <div className="flex flex-col items-center">
-                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Giá trọn gói</span>
-                    <div className="text-3xl font-black text-slate-900">1.400.000đ</div>
-                  </div>
-                  <button 
-                    onClick={() => {
-                      const message = `Chào Nguyễn Vy Luxury, tôi muốn đặt xe tuyến cố định:\n- Lộ trình: Trung Tâm Sài Gòn ➡️ Trung Tâm Cần Thơ\n- Giá: 1.400.000đ`;
-                      window.open(`https://zalo.me/0937243749?text=${encodeURIComponent(message)}`, '_blank');
-                    }}
-                    className="w-full bg-red-600 text-white py-4 rounded-2xl font-black hover:bg-red-700 transition-all uppercase text-sm tracking-widest shadow-lg shadow-red-100 group-hover:scale-[1.02] active:scale-95"
-                  >
-                    " Book Xe "
-                  </button>
-                </motion.div>
 
-                {/* Route 2 */}
-                <motion.div 
-                  initial={{ opacity: 0, x: 20 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  className="bg-slate-50 p-8 rounded-[2rem] border border-slate-100 flex flex-col items-center gap-5 shadow-sm hover:shadow-md transition-all group"
-                >
-                  <div className="text-sm font-bold text-slate-900 flex items-center gap-3 bg-white px-4 py-2 rounded-full shadow-sm">
-                    Sài Gòn <span className="text-red-600 animate-pulse">➡️</span> Sóc Trăng
+                  <div className="space-y-4">
+                    {/* Route 1 */}
+                    <div className="bg-slate-50 p-6 rounded-3xl border border-slate-100 flex flex-col items-center gap-4 shadow-sm hover:shadow-md transition-all group">
+                      <div className="text-sm font-bold text-slate-900 flex items-center gap-3 bg-white px-4 py-2 rounded-full shadow-sm">
+                        Sài Gòn <span className="text-red-600 animate-pulse">➡️</span> Cần Thơ
+                      </div>
+                      <div className="flex flex-col items-center">
+                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Giá trọn gói</span>
+                        <div className="text-3xl font-black text-slate-900">1.400.000đ</div>
+                      </div>
+                      <button 
+                        onClick={() => {
+                          const message = `Chào Nguyễn Vy Luxury, tôi muốn đặt xe tuyến cố định:\n- Lộ trình: Trung Tâm Sài Gòn ➡️ Trung Tâm Cần Thơ\n- Giá: 1.400.000đ`;
+                          window.open(`https://zalo.me/0937243749?text=${encodeURIComponent(message)}`, '_blank');
+                        }}
+                        className="w-full bg-red-600 text-white py-4 rounded-2xl font-black hover:bg-red-700 transition-all uppercase text-sm tracking-widest shadow-lg shadow-red-100 group-hover:scale-[1.02] active:scale-95"
+                      >
+                        " Book Xe "
+                      </button>
+                    </div>
+
+                    {/* Route 2 */}
+                    <div className="bg-slate-50 p-6 rounded-3xl border border-slate-100 flex flex-col items-center gap-4 shadow-sm hover:shadow-md transition-all group">
+                      <div className="text-sm font-bold text-slate-900 flex items-center gap-3 bg-white px-4 py-2 rounded-full shadow-sm">
+                        Sài Gòn <span className="text-red-600 animate-pulse">➡️</span> Sóc Trăng
+                      </div>
+                      <div className="flex flex-col items-center">
+                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Giá trọn gói</span>
+                        <div className="text-3xl font-black text-slate-900">1.800.000đ</div>
+                      </div>
+                      <button 
+                        onClick={() => {
+                          const message = `Chào Nguyễn Vy Luxury, tôi muốn đặt xe tuyến cố định:\n- Lộ trình: Trung Tâm Sài Gòn ➡️ Trung Tâm Sóc Trăng\n- Giá: 1.800.000đ`;
+                          window.open(`https://zalo.me/0937243749?text=${encodeURIComponent(message)}`, '_blank');
+                        }}
+                        className="w-full bg-red-600 text-white py-4 rounded-2xl font-black hover:bg-red-700 transition-all uppercase text-sm tracking-widest shadow-lg shadow-red-100 group-hover:scale-[1.02] active:scale-95"
+                      >
+                        " Book Xe "
+                      </button>
+                    </div>
                   </div>
-                  <div className="flex flex-col items-center">
-                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Giá trọn gói</span>
-                    <div className="text-3xl font-black text-slate-900">1.800.000đ</div>
+
+                  <div className="mt-8 flex justify-center gap-4">
+                    <div className="flex items-center gap-2 px-4 py-2 bg-slate-50 rounded-xl border border-slate-100">
+                      <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                      <span className="text-[10px] font-bold text-slate-700 uppercase tracking-widest">Sẵn sàng phục vụ</span>
+                    </div>
+                    <div className="flex items-center gap-2 px-4 py-2 bg-slate-50 rounded-xl border border-slate-100">
+                      <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
+                      <span className="text-[10px] font-bold text-slate-700 uppercase tracking-widest">4.9/5 Đánh giá</span>
+                    </div>
                   </div>
-                  <button 
-                    onClick={() => {
-                      const message = `Chào Nguyễn Vy Luxury, tôi muốn đặt xe tuyến cố định:\n- Lộ trình: Trung Tâm Sài Gòn ➡️ Trung Tâm Sóc Trăng\n- Giá: 1.800.000đ`;
-                      window.open(`https://zalo.me/0937243749?text=${encodeURIComponent(message)}`, '_blank');
-                    }}
-                    className="w-full bg-red-600 text-white py-4 rounded-2xl font-black hover:bg-red-700 transition-all uppercase text-sm tracking-widest shadow-lg shadow-red-100 group-hover:scale-[1.02] active:scale-95"
-                  >
-                    " Book Xe "
-                  </button>
-                </motion.div>
-              </div>
+                </div>
+              </motion.div>
             </div>
           </div>
         </section>
+
+        {/* Features Section */}
 
         {/* Features Section */}
         <section className="py-20 bg-slate-50">
