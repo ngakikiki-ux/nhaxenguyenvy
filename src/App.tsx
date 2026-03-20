@@ -564,17 +564,18 @@ export default function App() {
                         window.open(`https://zalo.me/0937243749?text=${encodedMessage}`, '_blank');
                       }}
                       animate={{ 
-                        backgroundColor: ["#0068FF", "#ff0000", "#0068FF"],
-                        x: [0, -2, 2, -2, 2, 0]
+                        backgroundColor: ["#a855f7", "#ff0000", "#a855f7"],
+                        scale: [1, 1.03, 1],
+                        x: [0, -1, 1, -1, 1, 0]
                       }}
                       transition={{ 
-                        duration: 1.5, 
+                        duration: 2, 
                         repeat: Infinity,
                         repeatType: "loop"
                       }}
-                      className="w-full text-white text-[11px] font-black py-2.5 rounded-lg transition-all flex items-center justify-center gap-2 shadow-lg"
+                      className="w-full text-white text-lg md:text-xl font-black py-5 rounded-[2rem] transition-all flex items-center justify-center gap-3 shadow-[0_15px_40px_rgba(168,85,247,0.3)] border-4 border-white/20"
                     >
-                      <ZaloIcon size={18} />
+                      <ZaloIcon size={28} />
                       ĐẶT XE QUA ZALO 👈
                     </motion.button>
                   </motion.div>
