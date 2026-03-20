@@ -451,31 +451,14 @@ export default function App() {
           </div>
 
           <div className="container mx-auto px-4 relative z-10">
-            <div className="text-center max-w-4xl mx-auto mb-16">
-              {/* Hero Text */}
-              <motion.div
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8 }}
-              >
-                <h2 className="text-4xl md:text-6xl font-black text-[#1a202c] leading-[1.1] tracking-tight mb-6">
-                  Dịch Vụ Xe <span className="text-[#ff0000] italic">Hạng Sang</span><br />
-                  Giá Bình Dân
-                </h2>
-                <p className="text-sm md:text-lg text-slate-500 max-w-2xl mx-auto leading-relaxed font-medium">
-                  Trải nghiệm hành trình đẳng cấp với đội ngũ tài xế chuyên nghiệp. Cam kết<br className="hidden md:block" /> giá tốt nhất thị trường, phục vụ 24/7.
-                </p>
-              </motion.div>
-            </div>
-
-            <div className="flex flex-col lg:flex-row items-stretch justify-center gap-6 lg:gap-8 max-w-6xl mx-auto">
-              {/* Booking Form */}
+            {/* Booking Form at the Top */}
+            <div className="max-w-4xl mx-auto mb-12">
               <motion.div 
                 id="booking"
-                initial={{ opacity: 0, x: -30 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.8, delay: 0.2 }}
-                className="bg-white rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.1)] p-6 md:p-10 w-full lg:w-1/2 border border-slate-50 relative"
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.1 }}
+                className="bg-white rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.1)] p-6 md:p-10 border border-slate-50 relative"
               >
                 <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-[#ff0000] text-white px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-widest shadow-xl z-10 whitespace-nowrap">
                   BÁO GIÁ TỰ ĐỘNG 24/7
@@ -596,6 +579,40 @@ export default function App() {
                     </motion.button>
                   </motion.div>
                 )}
+              </motion.div>
+            </div>
+
+            <div className="flex flex-col lg:flex-row items-stretch justify-center gap-6 lg:gap-8 max-w-6xl mx-auto">
+              {/* Hero Text Card */}
+              <motion.div
+                initial={{ opacity: 0, x: -30 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.8, delay: 0.2 }}
+                className="w-full lg:w-1/2"
+              >
+                <div className="bg-white rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.08)] p-6 md:p-10 border border-slate-50 h-full flex flex-col justify-center text-center">
+                  <h2 className="text-3xl md:text-5xl font-black text-[#1a202c] leading-[1.1] tracking-tight mb-6">
+                    Dịch Vụ Xe <span className="text-[#ff0000] italic">Hạng Sang</span><br />
+                    Giá Bình Dân
+                  </h2>
+                  <p className="text-sm md:text-base text-slate-500 leading-relaxed font-medium">
+                    Trải nghiệm hành trình đẳng cấp với đội ngũ tài xế chuyên nghiệp. Cam kết giá tốt nhất thị trường, phục vụ 24/7.
+                  </p>
+                  <div className="mt-8 flex justify-center gap-4">
+                    <div className="flex flex-col items-center">
+                      <div className="w-12 h-12 bg-red-50 text-red-600 rounded-full flex items-center justify-center mb-2">
+                        <Star size={24} fill="currentColor" />
+                      </div>
+                      <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Chất lượng</span>
+                    </div>
+                    <div className="flex flex-col items-center">
+                      <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center mb-2">
+                        <Phone size={24} fill="currentColor" />
+                      </div>
+                      <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Hỗ trợ 24/7</span>
+                    </div>
+                  </div>
+                </div>
               </motion.div>
 
               {/* Fixed Routes */}
