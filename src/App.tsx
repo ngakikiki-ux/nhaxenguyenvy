@@ -89,29 +89,95 @@ export default function App() {
   const [distance, setDistance] = useState<string>('');
   const [pickup, setPickup] = useState({ province: '', district: '', ward: '' });
   const [destination, setDestination] = useState({ province: '', district: '', ward: '' });
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [calcResult, setCalcResult] = useState<{
+    distance: number;
+    rate: number;
+    basePrice: number;
+    roundedPrice: number;
+  } | null>(null);
 
-  const calculatePrice = (distStr: string) => {
-    const x = parseFloat(distStr);
-    if (isNaN(x) || x <= 0) return null;
+  const getCoordinates = async (address: string): Promise<[number, number] | null> => {
+    try {
+      const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}&limit=1`);
+      const data = await response.json();
+      if (data && data.length > 0) {
+        return [parseFloat(data[0].lat), parseFloat(data[0].lon)];
+      }
+      return null;
+    } catch (err) {
+      console.error("Geocoding error:", err);
+      return null;
+    }
+  };
 
+  const getRouteDistance = async (start: [number, number], end: [number, number]): Promise<number | null> => {
+    try {
+      const response = await fetch(`https://router.project-osrm.org/route/v1/driving/${start[1]},${start[0]};${end[1]},${end[0]}?overview=false`);
+      const data = await response.json();
+      if (data.code === 'Ok' && data.routes && data.routes.length > 0) {
+        return data.routes[0].distance; // in meters
+      }
+      return null;
+    } catch (err) {
+      console.error("Routing error:", err);
+      return null;
+    }
+  };
+
+  const calculateFinalPrice = (distInKm: number) => {
     let rate = 0;
-    if (x < 100) rate = 11000;
-    else if (x < 130) rate = 10000;
+    if (distInKm < 100) rate = 11000;
+    else if (distInKm < 130) rate = 10000;
     else rate = 9000;
 
-    const basePrice = x * rate;
+    const basePrice = distInKm * rate;
     const remainder = basePrice % 100000;
     const roundedPrice = remainder < 50000 ? basePrice - remainder : basePrice + (100000 - remainder);
 
     return {
-      distance: x,
+      distance: Math.round(distInKm * 10) / 10,
       rate,
       basePrice,
       roundedPrice
     };
   };
 
-  const priceResult = calculatePrice(distance);
+  const handleEstimate = async () => {
+    if (!pickup.province || !destination.province) {
+      setError("Vui lòng chọn đầy đủ điểm đón và điểm đến.");
+      return;
+    }
+
+    setIsLoading(true);
+    setError(null);
+    setCalcResult(null);
+
+    const pickupAddr = `${pickup.ward}, ${pickup.district}, ${pickup.province}, Việt Nam`;
+    const destAddr = `${destination.ward}, ${destination.district}, ${destination.province}, Việt Nam`;
+
+    const startCoords = await getCoordinates(pickupAddr);
+    const endCoords = await getCoordinates(destAddr);
+
+    if (!startCoords || !endCoords) {
+      setError("Không tìm thấy địa điểm. Vui lòng kiểm tra lại địa chỉ.");
+      setIsLoading(false);
+      return;
+    }
+
+    const distInMeters = await getRouteDistance(startCoords, endCoords);
+    if (distInMeters === null) {
+      setError("Không thể tính được quãng đường giữa hai địa điểm này.");
+      setIsLoading(false);
+      return;
+    }
+
+    const distInKm = distInMeters / 1000;
+    const result = calculateFinalPrice(distInKm);
+    setCalcResult(result);
+    setIsLoading(false);
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -248,21 +314,56 @@ export default function App() {
               
               <button 
                 type="button"
-                onClick={() => {
-                  let message = `Chào Nguyễn Vy Luxury, tôi muốn xem báo giá xe:\n- Số điện thoại: ${phone || 'Chưa nhập'}\n- Điểm đón: ${pickup.ward}, ${pickup.district}, ${pickup.province}\n- Điểm đến: ${destination.ward}, ${destination.district}, ${destination.province}`;
-                  
-                  if (priceResult) {
-                    message += `\n\nTHÔNG TIN BÁO GIÁ:\n- Số km: ${priceResult.distance} km\n- Đơn giá: ${priceResult.rate.toLocaleString('vi-VN')}đ/km\n- Tiền gốc: ${priceResult.basePrice.toLocaleString('vi-VN')}đ\n- TỔNG THANH TOÁN: ${priceResult.roundedPrice.toLocaleString('vi-VN')}đ`;
-                  }
-                  
-                  const encodedMessage = encodeURIComponent(message);
-                  window.open(`https://zalo.me/0937243749?text=${encodedMessage}`, '_blank');
-                }}
-                className="w-full bg-green-600 hover:bg-green-700 text-white font-black py-4 rounded-xl shadow-lg shadow-green-200 transition-all transform hover:-translate-y-1 active:scale-95 uppercase tracking-wider mb-6 flex items-center justify-center gap-2"
+                disabled={isLoading}
+                onClick={handleEstimate}
+                className="w-full bg-green-600 hover:bg-green-700 disabled:bg-slate-400 text-white font-black py-4 rounded-xl shadow-lg shadow-green-200 transition-all transform hover:-translate-y-1 active:scale-95 uppercase tracking-wider mb-6 flex items-center justify-center gap-2"
               >
-                <MessageCircle size={20} fill="currentColor" />
-                XEM BÁO GIÁ
+                {isLoading ? (
+                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                ) : (
+                  <MessageCircle size={20} fill="currentColor" />
+                )}
+                {isLoading ? 'Đang tính toán...' : 'XEM BÁO GIÁ'}
               </button>
+
+              {error && (
+                <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-600 text-xs rounded-lg font-medium">
+                  {error}
+                </div>
+              )}
+
+              {calcResult && (
+                <motion.div 
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  className="mb-6 bg-slate-50 rounded-xl p-4 border border-slate-200 space-y-2"
+                >
+                  <div className="flex justify-between text-xs">
+                    <span className="text-slate-500">Quãng đường dự kiến:</span>
+                    <span className="font-bold">{calcResult.distance} km</span>
+                  </div>
+                  <div className="flex justify-between text-xs">
+                    <span className="text-slate-500">Đơn giá áp dụng:</span>
+                    <span className="font-bold">{calcResult.rate.toLocaleString('vi-VN')}đ/km</span>
+                  </div>
+                  <div className="pt-2 border-t border-slate-200 flex justify-between items-center">
+                    <span className="text-xs font-bold text-slate-900 uppercase">TỔNG THANH TOÁN:</span>
+                    <span className="text-lg font-black text-red-600">{calcResult.roundedPrice.toLocaleString('vi-VN')}đ</span>
+                  </div>
+                  
+                  <button 
+                    onClick={() => {
+                      const message = `Chào Nguyễn Vy Luxury, tôi muốn đặt xe:\n- Số điện thoại: ${phone || 'Chưa nhập'}\n- Điểm đón: ${pickup.ward}, ${pickup.district}, ${pickup.province}\n- Điểm đến: ${destination.ward}, ${destination.district}, ${destination.province}\n\nTHÔNG TIN BÁO GIÁ:\n- Quãng đường: ${calcResult.distance} km\n- Đơn giá: ${calcResult.rate.toLocaleString('vi-VN')}đ/km\n- TỔNG THANH TOÁN: ${calcResult.roundedPrice.toLocaleString('vi-VN')}đ`;
+                      const encodedMessage = encodeURIComponent(message);
+                      window.open(`https://zalo.me/0937243749?text=${encodedMessage}`, '_blank');
+                    }}
+                    className="w-full mt-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold py-2 rounded-lg transition-all flex items-center justify-center gap-2"
+                  >
+                    <MessageCircle size={16} fill="currentColor" />
+                    GỬI YÊU CẦU QUA ZALO
+                  </button>
+                </motion.div>
+              )}
 
               <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
                 <div>
