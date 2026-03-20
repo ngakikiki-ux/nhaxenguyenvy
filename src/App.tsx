@@ -16,11 +16,10 @@ function LocationSelector({
 }: { 
   label: string; 
   icon: any; 
-  value: { province: string; district: string; ward: string };
-  onChange: (val: { province: string; district: string; ward: string }) => void;
+  value: { province: string; district: string };
+  onChange: (val: { province: string; district: string }) => void;
 }) {
   const selectedProvince = locations.find(p => p.name === value.province);
-  const selectedDistrict = selectedProvince?.districts.find(d => d.name === value.district);
 
   return (
     <div className="space-y-2 bg-slate-50 p-3 rounded-xl border border-slate-100">
@@ -33,7 +32,7 @@ function LocationSelector({
         <div className="relative">
           <select 
             value={value.province}
-            onChange={(e) => onChange({ province: e.target.value, district: '', ward: '' })}
+            onChange={(e) => onChange({ province: e.target.value, district: '' })}
             className="w-full pl-3 pr-8 py-2 bg-white border border-slate-200 rounded-lg text-xs focus:ring-2 focus:ring-red-500/20 focus:border-red-500 outline-none appearance-none"
           >
             <option value="">Chọn Tỉnh/Thành</option>
@@ -47,25 +46,11 @@ function LocationSelector({
           <select 
             value={value.district}
             disabled={!value.province}
-            onChange={(e) => onChange({ ...value, district: e.target.value, ward: '' })}
+            onChange={(e) => onChange({ ...value, district: e.target.value })}
             className="w-full pl-3 pr-8 py-2 bg-white border border-slate-200 rounded-lg text-xs focus:ring-2 focus:ring-red-500/20 focus:border-red-500 outline-none appearance-none disabled:opacity-50"
           >
             <option value="">Chọn Quận/Huyện</option>
             {selectedProvince?.districts.map(d => <option key={d.slug} value={d.name}>{d.name}</option>)}
-          </select>
-          <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 w-3 h-3 pointer-events-none" />
-        </div>
-
-        {/* Phường/Xã */}
-        <div className="relative">
-          <select 
-            value={value.ward}
-            disabled={!value.district}
-            onChange={(e) => onChange({ ...value, ward: e.target.value })}
-            className="w-full pl-3 pr-8 py-2 bg-white border border-slate-200 rounded-lg text-xs focus:ring-2 focus:ring-red-500/20 focus:border-red-500 outline-none appearance-none disabled:opacity-50"
-          >
-            <option value="">Chọn Phường/Xã/Thị trấn</option>
-            {selectedDistrict?.wards.map(w => <option key={w.slug} value={w.name}>{w.name}</option>)}
           </select>
           <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 w-3 h-3 pointer-events-none" />
         </div>
@@ -80,8 +65,8 @@ export default function App() {
 
   const [phone, setPhone] = useState('');
   const [distance, setDistance] = useState<string>('');
-  const [pickup, setPickup] = useState({ province: '', district: '', ward: '' });
-  const [destination, setDestination] = useState({ province: '', district: '', ward: '' });
+  const [pickup, setPickup] = useState({ province: '', district: '' });
+  const [destination, setDestination] = useState({ province: '', district: '' });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [calcResult, setCalcResult] = useState<{
@@ -147,8 +132,8 @@ export default function App() {
     setError(null);
     setCalcResult(null);
 
-    const pickupAddr = `${pickup.ward}, ${pickup.district}, ${pickup.province}, Việt Nam`;
-    const destAddr = `${destination.ward}, ${destination.district}, ${destination.province}, Việt Nam`;
+    const pickupAddr = `${pickup.district}, ${pickup.province}, Việt Nam`;
+    const destAddr = `${destination.district}, ${destination.province}, Việt Nam`;
 
     const startCoords = await getCoordinates(pickupAddr);
     const endCoords = await getCoordinates(destAddr);
@@ -352,7 +337,7 @@ export default function App() {
                   
                   <button 
                     onClick={() => {
-                      const message = `Chào Nguyễn Vy Luxury, tôi muốn đặt xe:\n- Số điện thoại: ${phone || 'Chưa nhập'}\n- Điểm đón: ${pickup.ward}, ${pickup.district}, ${pickup.province}\n- Điểm đến: ${destination.ward}, ${destination.district}, ${destination.province}\n\nTHÔNG TIN BÁO GIÁ:\n- Quãng đường: ${calcResult.distance} km\n- Đơn giá: ${calcResult.rate.toLocaleString('vi-VN')}đ/km\n- TỔNG THANH TOÁN: ${calcResult.roundedPrice.toLocaleString('vi-VN')}đ`;
+                      const message = `Chào Nguyễn Vy Luxury, tôi muốn đặt xe:\n- Số điện thoại: ${phone || 'Chưa nhập'}\n- Điểm đón: ${pickup.district}, ${pickup.province}\n- Điểm đến: ${destination.district}, ${destination.province}\n\nTHÔNG TIN BÁO GIÁ:\n- Quãng đường: ${calcResult.distance} km\n- Đơn giá: ${calcResult.rate.toLocaleString('vi-VN')}đ/km\n- TỔNG THANH TOÁN: ${calcResult.roundedPrice.toLocaleString('vi-VN')}đ`;
                       const encodedMessage = encodeURIComponent(message);
                       window.open(`https://zalo.me/0937243749?text=${encodedMessage}`, '_blank');
                     }}
