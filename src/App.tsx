@@ -773,7 +773,7 @@ export default function App() {
       </footer>
 
       {/* Floating Contact Stack */}
-      <div className="fixed bottom-6 right-6 z-50 flex flex-col gap-3 items-end">
+      <div className="fixed bottom-6 right-6 z-50 flex flex-col gap-4 items-end">
         {/* Phone */}
         <motion.a 
           href="tel:0937243749"
@@ -781,13 +781,15 @@ export default function App() {
           animate={{ opacity: 1, x: 0 }}
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
-          className="bg-red-600 text-white p-3.5 rounded-full shadow-2xl flex items-center justify-center relative group"
+          className="relative group flex items-center justify-center"
         >
-          <Phone size={24} fill="currentColor" />
-          <span className="absolute right-14 bg-red-600 text-white px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none shadow-xl">
+          <div className="bg-red-600 p-4 rounded-full shadow-2xl flex items-center justify-center relative">
+            <Phone size={28} fill="currentColor" className="text-white" />
+            <span className="absolute inset-0 rounded-full bg-red-600 animate-ping opacity-20"></span>
+          </div>
+          <span className="absolute right-16 bg-red-600 text-white px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none shadow-xl">
             Gọi ngay: 0937 243 749
           </span>
-          <span className="absolute inset-0 rounded-full bg-red-600 animate-ping opacity-20"></span>
         </motion.a>
 
         {/* Zalo */}
@@ -799,10 +801,10 @@ export default function App() {
           transition={{ delay: 0.1 }}
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
-          className="bg-white p-0.5 rounded-full shadow-2xl flex items-center justify-center relative group border border-blue-100"
+          className="relative group flex items-center justify-center"
         >
-          <ZaloIcon size={48} />
-          <span className="absolute right-14 bg-white text-blue-600 px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none shadow-xl border border-blue-50">
+          <ZaloIcon size={60} />
+          <span className="absolute right-16 bg-white text-blue-600 px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none shadow-xl border border-blue-50">
             Chat Zalo
           </span>
         </motion.a>
@@ -816,10 +818,10 @@ export default function App() {
           transition={{ delay: 0.2 }}
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
-          className="bg-white p-2 rounded-full shadow-2xl flex items-center justify-center relative group border border-blue-50"
+          className="relative group flex items-center justify-center"
         >
-          <FacebookIcon size={32} />
-          <span className="absolute right-14 bg-white text-blue-800 px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none shadow-xl border border-blue-50">
+          <FacebookIcon size={52} />
+          <span className="absolute right-16 bg-white text-blue-800 px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none shadow-xl border border-blue-50">
             Facebook
           </span>
         </motion.a>
@@ -833,10 +835,10 @@ export default function App() {
           transition={{ delay: 0.3 }}
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
-          className="bg-white p-2 rounded-full shadow-2xl flex items-center justify-center relative group border border-green-50"
+          className="relative group flex items-center justify-center"
         >
-          <WhatsAppIcon size={32} />
-          <span className="absolute right-14 bg-white text-green-600 px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none shadow-xl border border-green-50">
+          <WhatsAppIcon size={52} />
+          <span className="absolute right-16 bg-white text-green-600 px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none shadow-xl border border-green-50">
             WhatsApp
           </span>
         </motion.a>
@@ -850,10 +852,10 @@ export default function App() {
           transition={{ delay: 0.4 }}
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
-          className="bg-white p-2 rounded-full shadow-2xl flex items-center justify-center relative group border border-green-50"
+          className="relative group flex items-center justify-center"
         >
-          <LineIcon size={32} />
-          <span className="absolute right-14 bg-white text-green-500 px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none shadow-xl border border-green-50">
+          <LineIcon size={52} />
+          <span className="absolute right-16 bg-white text-green-500 px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none shadow-xl border border-green-50">
             Line
           </span>
         </motion.a>
