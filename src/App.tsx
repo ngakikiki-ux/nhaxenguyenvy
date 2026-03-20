@@ -8,13 +8,6 @@ import { Phone, MapPin, Car, Menu, X, ChevronDown, MessageCircle, Search } from 
 import { motion, AnimatePresence } from 'motion/react';
 import { locations } from './data/locations';
 
-const destinations = [
-  'CÀ MAU', 'BẠC LIÊU', 'HẬU GIANG', 'CẦN THƠ', 
-  'KIÊN GIANG', 'AN GIANG', 'TRÀ VINH', 'VĨNH LONG',
-  'BẾN TRE', 'TIỀN GIANG', 'LONG AN', 'ĐỒNG THÁP',
-  'SÓC TRĂNG'
-];
-
 function LocationSelector({ 
   label, 
   icon: Icon, 
@@ -219,7 +212,6 @@ export default function App() {
             <nav className="flex gap-6 font-semibold text-sm">
               <a href="#" className="hover:text-red-600 transition-colors">Trang chủ</a>
               <a href="#booking" className="hover:text-red-600 transition-colors">Đặt xe</a>
-              <a href="#destinations" className="hover:text-red-600 transition-colors">Tuyến đường</a>
               <a href="#" className="hover:text-red-600 transition-colors">Liên hệ</a>
             </nav>
             <a 
@@ -252,7 +244,6 @@ export default function App() {
             <nav className="flex flex-col gap-6 text-xl font-bold">
               <a href="#" onClick={() => setMobileMenuOpen(false)}>Trang chủ</a>
               <a href="#booking" onClick={() => setMobileMenuOpen(false)}>Đặt xe</a>
-              <a href="#destinations" onClick={() => setMobileMenuOpen(false)}>Tuyến đường</a>
               <a href="tel:0937243749" className="text-red-600 flex items-center gap-2">
                 <Phone fill="currentColor" /> 0937 243 749
               </a>
@@ -272,58 +263,66 @@ export default function App() {
               className="w-full h-full object-cover"
               referrerPolicy="no-referrer"
             />
-            <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-transparent"></div>
+            <div className="absolute inset-0 bg-black/50"></div>
           </div>
 
-          <div className="container mx-auto px-4 relative z-10 grid lg:grid-cols-2 gap-12 items-center">
-            <motion.div 
-              initial={{ opacity: 0, x: -50 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8 }}
-              className="text-white"
-            >
-              <span className="inline-block bg-red-600 text-white px-4 py-1 rounded-md text-sm font-bold mb-4 uppercase tracking-widest">
-                Dịch vụ 5 sao
-              </span>
-              <h2 className="text-4xl md:text-6xl font-black mb-6 leading-tight">
-                CHO THUÊ XE <br />
-                <span className="text-red-500">NGUYỄN VY LUXURY</span>
-              </h2>
-              <p className="text-lg md:text-xl text-slate-200 mb-8 max-w-lg">
-                Chuyên cung cấp dịch vụ xe du lịch, xe đi tỉnh, xe đưa đón sân bay uy tín, chất lượng cao tại khu vực Miền Tây.
-              </p>
-              <div className="flex flex-wrap gap-4">
-                <div className="flex items-center gap-2 bg-white/10 backdrop-blur-md px-4 py-2 rounded-lg border border-white/20">
-                  <Phone className="text-red-500" />
-                  <span className="font-semibold">Hỗ trợ 24/7</span>
-                </div>
-              </div>
-            </motion.div>
-
+          <div className="container mx-auto px-4 relative z-10 flex justify-center items-center">
             {/* Booking Form */}
             <motion.div 
               id="booking"
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="bg-white rounded-2xl shadow-2xl p-6 md:p-8 max-w-md mx-auto lg:mr-0"
+              className="bg-white rounded-2xl shadow-2xl p-6 md:p-8 max-w-md w-full"
             >
-              <h3 className="text-2xl font-bold text-slate-900 mb-2 flex items-center gap-2">
+              <h3 className="text-2xl font-bold text-slate-900 mb-6 flex items-center gap-2">
                 <Car className="text-red-600" /> Điền vào xem giá
               </h3>
               
+              <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
+                <div>
+                  <label className="block text-xs font-bold text-slate-500 uppercase mb-1 ml-1">Số điện thoại</label>
+                  <div className="relative">
+                    <Phone className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5" />
+                    <input 
+                      type="tel" 
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
+                      placeholder="Nhập số điện thoại"
+                      className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  <LocationSelector 
+                    label="Điểm đón" 
+                    icon={MapPin} 
+                    value={pickup}
+                    onChange={setPickup}
+                  />
+                  
+                  <LocationSelector 
+                    label="Điểm đến" 
+                    icon={Search} 
+                    value={destination}
+                    onChange={setDestination}
+                  />
+                </div>
+              </form>
+
               <button 
                 type="button"
                 disabled={isLoading}
                 onClick={handleEstimate}
-                className="w-full bg-green-600 hover:bg-green-700 disabled:bg-slate-400 text-white font-black py-4 rounded-xl shadow-lg shadow-green-200 transition-all transform hover:-translate-y-1 active:scale-95 uppercase tracking-wider mb-6 flex items-center justify-center gap-2"
+                className="w-full bg-green-600 hover:bg-green-700 disabled:bg-slate-400 text-white font-black py-4 rounded-xl shadow-lg shadow-green-200 transition-all transform hover:-translate-y-1 active:scale-95 uppercase tracking-wider mt-6 mb-4 flex items-center justify-center gap-2"
               >
                 {isLoading ? (
                   <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                 ) : (
                   <MessageCircle size={20} fill="currentColor" />
                 )}
-                {isLoading ? 'Đang tính toán...' : 'XEM BÁO GIÁ'}
+                {isLoading ? 'Đang tính toán...' : 'CLICK VÀO XEM BÁO GIÁ'}
               </button>
 
               {error && (
@@ -364,77 +363,10 @@ export default function App() {
                   </button>
                 </motion.div>
               )}
-
-              <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
-                <div>
-                  <label className="block text-xs font-bold text-slate-500 uppercase mb-1 ml-1">Số điện thoại</label>
-                  <div className="relative">
-                    <Phone className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5" />
-                    <input 
-                      type="tel" 
-                      value={phone}
-                      onChange={(e) => setPhone(e.target.value)}
-                      placeholder="Nhập số điện thoại"
-                      className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all"
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-4">
-                  <LocationSelector 
-                    label="Điểm đón" 
-                    icon={MapPin} 
-                    value={pickup}
-                    onChange={setPickup}
-                  />
-                  
-                  <LocationSelector 
-                    label="Điểm đến" 
-                    icon={Search} 
-                    value={destination}
-                    onChange={setDestination}
-                  />
-                </div>
-              </form>
               <p className="text-center text-[10px] text-slate-400 mt-4">
                 * Nhấn để kết nối Zalo và nhận báo giá ngay lập tức.
               </p>
             </motion.div>
-          </div>
-        </section>
-
-        {/* Destinations Section */}
-        <section id="destinations" className="py-20 bg-white">
-          <div className="container mx-auto px-4">
-            <motion.div 
-              {...fadeInUp}
-              className="text-center mb-12"
-            >
-              <h2 className="text-3xl md:text-4xl font-black text-slate-900 mb-4">
-                BẠN CẦN THUÊ XE ĐI ĐÂU?
-              </h2>
-              <div className="w-20 h-1.5 bg-red-600 mx-auto rounded-full mb-6"></div>
-              <p className="text-slate-500 max-w-2xl mx-auto italic">
-                Dưới đây là các tuyến đường phổ biến chúng tôi thường xuyên phục vụ. 
-                Giá cả cạnh tranh, tài xế nhiệt tình, xe 4 chỗ và 7 chỗ đời mới.
-              </p>
-            </motion.div>
-
-            <div className="flex flex-wrap justify-center gap-3 md:gap-4">
-              {destinations.map((city, index) => (
-                <motion.button
-                  key={city}
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  whileHover={{ scale: 1.05, backgroundColor: '#b91c1c' }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.05 }}
-                  className="bg-red-600 text-white px-6 py-3 rounded-full font-bold text-sm md:text-base shadow-md hover:shadow-xl transition-all"
-                >
-                  {city}
-                </motion.button>
-              ))}
-            </div>
           </div>
         </section>
 
