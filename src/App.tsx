@@ -450,39 +450,37 @@ export default function App() {
           </div>
 
           <div className="container mx-auto px-4 relative z-10">
-            <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
+            <div className="flex flex-col items-center text-center max-w-4xl mx-auto">
               {/* Hero Text */}
-              <div className="flex-1 text-center lg:text-left">
-                <motion.div
-                  initial={{ opacity: 0, x: -30 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.8 }}
-                >
-                  <span className="inline-block px-4 py-1.5 bg-red-50 text-red-600 text-xs font-black uppercase tracking-[0.3em] rounded-full mb-6">
-                    Nguyễn Vy Luxury
-                  </span>
-                  <h2 className="text-4xl md:text-6xl lg:text-7xl font-black text-slate-900 leading-[1.1] tracking-tight mb-6">
-                    Dịch Vụ Xe <br />
-                    <span className="text-red-600 italic">Hạng Sang</span> <br />
-                    Giá Bình Dân
-                  </h2>
-                  <p className="text-lg text-slate-600 max-w-xl mx-auto lg:mx-0 mb-8 font-medium leading-relaxed">
-                    Trải nghiệm hành trình đẳng cấp với đội ngũ tài xế chuyên nghiệp. 
-                    Cam kết giá tốt nhất thị trường, phục vụ 24/7.
-                  </p>
+              <motion.div
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8 }}
+                className="mb-10"
+              >
+                <span className="inline-block px-4 py-1.5 bg-red-50 text-red-600 text-xs font-black uppercase tracking-[0.3em] rounded-full mb-6">
+                  Nguyễn Vy Luxury
+                </span>
+                <h2 className="text-4xl md:text-6xl lg:text-7xl font-black text-slate-900 leading-[1.1] tracking-tight mb-6">
+                  Dịch Vụ Xe <span className="text-red-600 italic">Hạng Sang</span> <br />
+                  Giá Bình Dân
+                </h2>
+                <p className="text-lg text-slate-600 max-w-2xl mx-auto mb-8 font-medium leading-relaxed">
+                  Trải nghiệm hành trình đẳng cấp với đội ngũ tài xế chuyên nghiệp. 
+                  Cam kết giá tốt nhất thị trường, phục vụ 24/7.
+                </p>
 
-                  <div className="flex flex-wrap justify-center lg:justify-start gap-4 mb-10">
-                    <div className="flex items-center gap-2 px-4 py-2 bg-white rounded-xl shadow-sm border border-slate-100">
-                      <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                      <span className="text-xs font-bold text-slate-700">Sẵn sàng phục vụ</span>
-                    </div>
-                    <div className="flex items-center gap-2 px-4 py-2 bg-white rounded-xl shadow-sm border border-slate-100">
-                      <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
-                      <span className="text-xs font-bold text-slate-700">4.9/5 Đánh giá</span>
-                    </div>
+                <div className="flex flex-wrap justify-center gap-4">
+                  <div className="flex items-center gap-2 px-4 py-2 bg-white rounded-xl shadow-sm border border-slate-100">
+                    <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                    <span className="text-xs font-bold text-slate-700">Sẵn sàng phục vụ</span>
                   </div>
-                </motion.div>
-              </div>
+                  <div className="flex items-center gap-2 px-4 py-2 bg-white rounded-xl shadow-sm border border-slate-100">
+                    <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
+                    <span className="text-xs font-bold text-slate-700">4.9/5 Đánh giá</span>
+                  </div>
+                </div>
+              </motion.div>
 
               {/* Booking Form */}
               <motion.div 
@@ -490,16 +488,20 @@ export default function App() {
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.2 }}
-                className="bg-white rounded-[2.5rem] shadow-[0_32px_64px_-16px_rgba(0,0,0,0.1)] p-8 md:p-10 max-w-md w-full border border-white"
+                className="bg-white rounded-[2.5rem] shadow-[0_32px_64px_-16px_rgba(0,0,0,0.15)] p-8 md:p-10 max-w-xl w-full border border-white relative"
               >
-                <div className="mb-8">
-                  <h3 className="text-2xl font-black text-slate-900 flex items-center gap-3 tracking-tight">
+                <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-red-600 text-white px-6 py-2 rounded-full text-xs font-black uppercase tracking-widest shadow-lg">
+                  Báo giá tự động 24/7
+                </div>
+
+                <div className="mb-8 text-center">
+                  <h3 className="text-2xl font-black text-slate-900 flex items-center justify-center gap-3 tracking-tight">
                     <div className="bg-red-600 p-2 rounded-xl">
                       <Car className="text-white w-6 h-6" />
                     </div>
                     Báo Giá Nhanh
                   </h3>
-                  <p className="text-slate-500 text-sm mt-2 font-medium">Nhập thông tin để nhận báo giá tự động</p>
+                  <p className="text-slate-500 text-sm mt-2 font-medium">Nhập thông tin để nhận báo giá chính xác nhất</p>
                 </div>
                 
                 <form className="space-y-5" onSubmit={(e) => e.preventDefault()}>
