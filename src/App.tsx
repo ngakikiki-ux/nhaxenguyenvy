@@ -4,7 +4,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { Phone, MapPin, Car, Menu, X, ChevronDown, MessageCircle, Search } from 'lucide-react';
+import { Phone, MapPin, Car, Menu, X, ChevronDown, MessageCircle, Search, Star } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { locations } from './data/locations';
 
@@ -12,6 +12,39 @@ const ZaloIcon = ({ size = 16, className = "" }: { size?: number; className?: st
   <img 
     src="https://upload.wikimedia.org/wikipedia/commons/9/91/Icon_of_Zalo.svg" 
     alt="Zalo" 
+    width={size} 
+    height={size} 
+    className={`object-contain ${className}`}
+    referrerPolicy="no-referrer"
+  />
+);
+
+const FacebookIcon = ({ size = 16, className = "" }: { size?: number; className?: string }) => (
+  <img 
+    src="https://upload.wikimedia.org/wikipedia/commons/b/b8/2021_Facebook_icon.svg" 
+    alt="Facebook" 
+    width={size} 
+    height={size} 
+    className={`object-contain ${className}`}
+    referrerPolicy="no-referrer"
+  />
+);
+
+const WhatsAppIcon = ({ size = 16, className = "" }: { size?: number; className?: string }) => (
+  <img 
+    src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" 
+    alt="WhatsApp" 
+    width={size} 
+    height={size} 
+    className={`object-contain ${className}`}
+    referrerPolicy="no-referrer"
+  />
+);
+
+const LineIcon = ({ size = 16, className = "" }: { size?: number; className?: string }) => (
+  <img 
+    src="https://upload.wikimedia.org/wikipedia/commons/4/41/LINE_logo.svg" 
+    alt="Line" 
     width={size} 
     height={size} 
     className={`object-contain ${className}`}
@@ -33,53 +66,71 @@ function LocationSelector({
   const selectedProvince = locations.find(p => p.name === value.province);
   const selectedDistrict = selectedProvince?.districts.find(d => d.name === value.district);
 
+  const isAirport = value.province.includes("Sân bay Tân Sơn Nhất");
+
   return (
-    <div className="space-y-2 bg-slate-50 p-3 rounded-xl border border-slate-100">
-      <label className="block text-[10px] font-black text-slate-500 uppercase ml-1 tracking-wider flex items-center gap-1">
-        <Icon size={12} className="text-red-600" /> {label}
+    <div className="space-y-3">
+      <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1 flex items-center gap-2">
+        <Icon size={14} className="text-red-600" /> {label}
       </label>
       
-      <div className="grid grid-cols-1 gap-2">
+      <div className="grid grid-cols-1 gap-3">
         {/* Tỉnh/Thành */}
-        <div className="relative">
+        <div className="relative group">
           <select 
             value={value.province}
-            onChange={(e) => onChange({ province: e.target.value, district: '', ward: '' })}
-            className="w-full pl-3 pr-8 py-2 bg-white border border-slate-200 rounded-lg text-xs focus:ring-2 focus:ring-red-500/20 focus:border-red-500 outline-none appearance-none"
+            onChange={(e) => {
+              const val = e.target.value;
+              if (val.includes("Sân bay Tân Sơn Nhất")) {
+                // Auto-select first district and ward for airport
+                onChange({ 
+                  province: val, 
+                  district: "Ga Quốc Nội", 
+                  ward: "Sảnh A" 
+                });
+              } else {
+                onChange({ province: val, district: '', ward: '' });
+              }
+            }}
+            className="w-full pl-4 pr-10 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl text-sm font-bold text-slate-700 focus:ring-4 focus:ring-red-500/5 focus:border-red-500 focus:bg-white outline-none appearance-none transition-all"
           >
             <option value="">Chọn Tỉnh/Thành</option>
             {locations.map(p => <option key={p.name} value={p.name}>{p.name}</option>)}
           </select>
-          <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 w-3 h-3 pointer-events-none" />
+          <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-300 w-4 h-4 pointer-events-none group-focus-within:text-red-500 transition-colors" />
         </div>
 
-        {/* Quận/Huyện */}
-        <div className="relative">
-          <select 
-            value={value.district}
-            disabled={!value.province}
-            onChange={(e) => onChange({ ...value, district: e.target.value, ward: '' })}
-            className="w-full pl-3 pr-8 py-2 bg-white border border-slate-200 rounded-lg text-xs focus:ring-2 focus:ring-red-500/20 focus:border-red-500 outline-none appearance-none disabled:opacity-50"
-          >
-            <option value="">Chọn Quận/Huyện</option>
-            {selectedProvince?.districts.map(d => <option key={d.name} value={d.name}>{d.name}</option>)}
-          </select>
-          <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 w-3 h-3 pointer-events-none" />
-        </div>
+        {!isAirport && (
+          <div className="grid grid-cols-2 gap-3">
+            {/* Quận/Huyện */}
+            <div className="relative group">
+              <select 
+                value={value.district}
+                disabled={!value.province}
+                onChange={(e) => onChange({ ...value, district: e.target.value, ward: '' })}
+                className="w-full pl-4 pr-10 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl text-sm font-bold text-slate-700 focus:ring-4 focus:ring-red-500/5 focus:border-red-500 focus:bg-white outline-none appearance-none transition-all disabled:opacity-50"
+              >
+                <option value="">Quận/Huyện</option>
+                {selectedProvince?.districts.map(d => <option key={d.name} value={d.name}>{d.name}</option>)}
+              </select>
+              <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-300 w-4 h-4 pointer-events-none group-focus-within:text-red-500 transition-colors" />
+            </div>
 
-        {/* Phường/Xã */}
-        <div className="relative">
-          <select 
-            value={value.ward}
-            disabled={!value.district}
-            onChange={(e) => onChange({ ...value, ward: e.target.value })}
-            className="w-full pl-3 pr-8 py-2 bg-white border border-slate-200 rounded-lg text-xs focus:ring-2 focus:ring-red-500/20 focus:border-red-500 outline-none appearance-none disabled:opacity-50"
-          >
-            <option value="">Chọn Phường/Xã/Thị trấn</option>
-            {selectedDistrict?.wards.map(w => <option key={w} value={w}>{w}</option>)}
-          </select>
-          <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 w-3 h-3 pointer-events-none" />
-        </div>
+            {/* Phường/Xã */}
+            <div className="relative group">
+              <select 
+                value={value.ward}
+                disabled={!value.district}
+                onChange={(e) => onChange({ ...value, ward: e.target.value })}
+                className="w-full pl-4 pr-10 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl text-sm font-bold text-slate-700 focus:ring-4 focus:ring-red-500/5 focus:border-red-500 focus:bg-white outline-none appearance-none transition-all disabled:opacity-50"
+              >
+                <option value="">Phường/Xã</option>
+                {selectedDistrict?.wards.map(w => <option key={w} value={w}>{w}</option>)}
+              </select>
+              <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-300 w-4 h-4 pointer-events-none group-focus-within:text-red-500 transition-colors" />
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -102,23 +153,40 @@ export default function App() {
     roundedPrice: number;
   } | null>(null);
 
-  const getCoordinates = async (address: string): Promise<[number, number] | null> => {
-    try {
-      const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}&limit=1`);
-      const data = await response.json();
-      if (data && data.length > 0) {
-        return [parseFloat(data[0].lat), parseFloat(data[0].lon)];
+  const getCoordinates = async (address: string, fallbackAddress?: string): Promise<[number, number] | null> => {
+    const fetchCoords = async (addr: string) => {
+      try {
+        const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(addr)}&limit=1`, {
+          headers: {
+            'User-Agent': 'NguyenVyLuxuryBookingApp/1.0'
+          }
+        });
+        const data = await response.json();
+        if (data && data.length > 0) {
+          return [parseFloat(data[0].lat), parseFloat(data[0].lon)] as [number, number];
+        }
+        return null;
+      } catch (err) {
+        console.error("Geocoding error:", err);
+        return null;
       }
-      return null;
-    } catch (err) {
-      console.error("Geocoding error:", err);
-      return null;
+    };
+
+    let coords = await fetchCoords(address);
+    if (!coords && fallbackAddress) {
+      console.log(`Geocoding failed for "${address}", trying fallback: "${fallbackAddress}"`);
+      coords = await fetchCoords(fallbackAddress);
     }
+    return coords;
   };
 
   const getRouteDistance = async (start: [number, number], end: [number, number]): Promise<number | null> => {
     try {
-      const response = await fetch(`https://router.project-osrm.org/route/v1/driving/${start[1]},${start[0]};${end[1]},${end[0]}?overview=false`);
+      const response = await fetch(`https://router.project-osrm.org/route/v1/driving/${start[1]},${start[0]};${end[1]},${end[0]}?overview=false`, {
+        headers: {
+          'User-Agent': 'NguyenVyLuxuryBookingApp/1.0'
+        }
+      });
       const data = await response.json();
       if (data.code === 'Ok' && data.routes && data.routes.length > 0) {
         return data.routes[0].distance; // in meters
@@ -146,45 +214,126 @@ export default function App() {
     };
   };
 
+  const SPECIAL_LOCATIONS: Record<string, string> = {
+    "Sân bay Tân Sơn Nhất": "Sân bay Tân Sơn Nhất, TP. Hồ Chí Minh, Việt Nam"
+  };
+
+  const normalizeDistrictName = (name: string) => {
+    // Convert "Cao Lãnh (Thành phố)" -> "Thành phố Cao Lãnh"
+    // Convert "Cao Lãnh (Huyện)" -> "Huyện Cao Lãnh"
+    // Convert "Duyên Hải (Thị xã)" -> "Thị xã Duyên Hải"
+    const match = name.match(/^(.*)\s\((Thành phố|Huyện|Thị xã)\)$/);
+    if (match) {
+      return `${match[2]} ${match[1]}`;
+    }
+    return name;
+  };
+
+  const formatGeocodeAddress = (loc: { province: string; district: string; ward: string }) => {
+    // Check for special locations first
+    for (const [key, fullAddress] of Object.entries(SPECIAL_LOCATIONS)) {
+      if (loc.province.includes(key)) {
+        return fullAddress;
+      }
+    }
+    
+    // Helper to strip emojis and trim
+    const clean = (str: string) => str.replace(/[\u{1F300}-\u{1F9FF}]|[\u{2700}-\u{27BF}]|[\u{1F600}-\u{1F64F}]|[\u{1F680}-\u{1F6FF}]|[\u{2600}-\u{26FF}]|[\u{1F1E0}-\u{1F1FF}]/gu, '').trim();
+    
+    const ward = clean(loc.ward);
+    const district = normalizeDistrictName(clean(loc.district));
+    const province = clean(loc.province).replace(/^TP\.\s*/, 'Thành phố ');
+    
+    // Format: phường/xã, quận/huyện/thành phố/thị xã, tỉnh/thành, Việt Nam
+    return `${ward}, ${district}, ${province}, Việt Nam`;
+  };
+
   const handleEstimate = async () => {
-    if (!pickup.province || !pickup.district || !pickup.ward || !destination.province || !destination.district || !destination.ward) {
-      setError("Vui lòng chọn đầy đủ Tỉnh/Huyện/Xã cho cả điểm đón và điểm đến.");
+    // Clear previous results
+    setError(null);
+    setCalcResult(null);
+
+    // Strict Validation
+    if (!pickup.province) {
+      setError("Vui lòng chọn Tỉnh/Thành cho điểm đón.");
+      return;
+    }
+    if (!pickup.district) {
+      setError("Vui lòng chọn Quận/Huyện cho điểm đón.");
+      return;
+    }
+    if (!pickup.ward) {
+      setError("Vui lòng chọn Phường/Xã cho điểm đón.");
+      return;
+    }
+
+    if (!destination.province) {
+      setError("Vui lòng chọn Tỉnh/Thành cho điểm đến.");
+      return;
+    }
+    if (!destination.district) {
+      setError("Vui lòng chọn Quận/Huyện cho điểm đến.");
+      return;
+    }
+    if (!destination.ward) {
+      setError("Vui lòng chọn Phường/Xã cho điểm đến.");
+      return;
+    }
+
+    // Check for identical locations
+    if (pickup.province === destination.province && 
+        pickup.district === destination.district && 
+        pickup.ward === destination.ward) {
+      setError("Điểm đón và điểm đến không được trùng nhau.");
       return;
     }
 
     setIsLoading(true);
-    setError(null);
-    setCalcResult(null);
 
-    const pickupAddr = `${pickup.ward}, ${pickup.district}, ${pickup.province}, Việt Nam`;
-    const destAddr = `${destination.ward}, ${destination.district}, ${destination.province}, Việt Nam`;
+    const pickupAddr = formatGeocodeAddress(pickup);
+    const destAddr = formatGeocodeAddress(destination);
 
-    const startCoords = await getCoordinates(pickupAddr);
-    const endCoords = await getCoordinates(destAddr);
+    // Fallback addresses (District + Province)
+    const pickupFallback = `${normalizeDistrictName(pickup.district)}, ${pickup.province.replace(/^TP\.\s*/, 'Thành phố ')}, Việt Nam`;
+    const destFallback = `${normalizeDistrictName(destination.district)}, ${destination.province.replace(/^TP\.\s*/, 'Thành phố ')}, Việt Nam`;
 
-    if (!startCoords || !endCoords) {
-      setError("Không tìm thấy địa điểm. Vui lòng kiểm tra lại địa chỉ.");
+    try {
+      const startCoords = await getCoordinates(pickupAddr, pickupFallback);
+      if (!startCoords) {
+        setError(`Không tìm thấy vị trí điểm đón: "${pickupAddr}". Vui lòng thử chọn địa danh lân cận hoặc kiểm tra lại.`);
+        setIsLoading(false);
+        return;
+      }
+
+      const endCoords = await getCoordinates(destAddr, destFallback);
+      if (!endCoords) {
+        setError(`Không tìm thấy vị trí điểm đến: "${destAddr}". Vui lòng thử chọn địa danh lân cận hoặc kiểm tra lại.`);
+        setIsLoading(false);
+        return;
+      }
+
+      const distInMeters = await getRouteDistance(startCoords, endCoords);
+      if (distInMeters === null) {
+        setError("Lỗi tính toán tuyến đường: Không thể tìm thấy đường đi giữa hai địa điểm này. Có thể do khoảng cách quá xa hoặc địa hình không phù hợp.");
+        setIsLoading(false);
+        return;
+      }
+
+      const distInKm = distInMeters / 1000;
+      const pricing = calculateFinalPrice(distInKm);
+      
+      setCalcResult({
+        distance: pricing.distance,
+        roundedPrice: pricing.roundedPrice,
+        pickup: pickupAddr,
+        destination: destAddr
+      });
+    } catch (err) {
+      console.error("Estimation error:", err);
+      setError("Đã có lỗi xảy ra trong quá trình tính toán. Vui lòng thử lại sau.");
+    } finally {
       setIsLoading(false);
-      return;
     }
-
-    const distInMeters = await getRouteDistance(startCoords, endCoords);
-    if (distInMeters === null) {
-      setError("Không thể tính được quãng đường giữa hai địa điểm này.");
-      setIsLoading(false);
-      return;
-    }
-
-    const distInKm = distInMeters / 1000;
-    const pricing = calculateFinalPrice(distInKm);
-    
-    setCalcResult({
-      distance: pricing.distance,
-      roundedPrice: pricing.roundedPrice,
-      pickup: pickupAddr,
-      destination: destAddr
-    });
-    setIsLoading(false);
   };
 
   useEffect(() => {
@@ -275,6 +424,12 @@ export default function App() {
               <a href="https://zalo.me/0937243749" target="_blank" className="text-blue-600 flex items-center gap-2">
                 <ZaloIcon size={32} /> Chat Zalo
               </a>
+              <a href="https://www.facebook.com/Nguyenvyfamily" target="_blank" className="text-blue-800 flex items-center gap-2">
+                <FacebookIcon size={32} /> Facebook
+              </a>
+              <a href="https://line.me/ti/p/QeBK3LeCL6" target="_blank" className="text-green-600 flex items-center gap-2">
+                <LineIcon size={32} /> Line
+              </a>
             </nav>
           </motion.div>
         )}
@@ -282,128 +437,181 @@ export default function App() {
 
       <main>
         {/* Hero Section */}
-        <section className="relative min-h-[90vh] flex items-center pt-20 overflow-hidden">
-          {/* Background Image */}
+        <section className="relative min-h-screen flex items-center pt-20 overflow-hidden bg-slate-50">
+          {/* Background Image with brighter overlay */}
           <div className="absolute inset-0 z-0">
             <img 
               src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&q=80&w=1920" 
               alt="Luxury Car" 
-              className="w-full h-full object-cover"
+              className="w-full h-full object-cover opacity-40"
               referrerPolicy="no-referrer"
             />
-            <div className="absolute inset-0 bg-black/50"></div>
+            <div className="absolute inset-0 bg-gradient-to-b from-white/80 via-white/40 to-slate-50"></div>
           </div>
 
-          <div className="container mx-auto px-4 relative z-10 flex justify-center items-center">
-            {/* Booking Form */}
-            <motion.div 
-              id="booking"
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="bg-white rounded-2xl shadow-2xl p-6 md:p-8 max-w-md w-full"
-            >
-              <h3 className="text-2xl font-bold text-slate-900 mb-6 flex items-center gap-2">
-                <Car className="text-red-600" /> Điền vào xem giá
-              </h3>
-              
-              <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
-                <div>
-                  <label className="block text-xs font-bold text-slate-500 uppercase mb-1 ml-1">Số điện thoại</label>
-                  <div className="relative">
-                    <Phone className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5" />
-                    <input 
-                      type="tel" 
-                      value={phone}
-                      onChange={(e) => setPhone(e.target.value)}
-                      placeholder="Nhập số điện thoại"
-                      className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all"
+          <div className="container mx-auto px-4 relative z-10">
+            <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
+              {/* Hero Text */}
+              <div className="flex-1 text-center lg:text-left">
+                <motion.div
+                  initial={{ opacity: 0, x: -30 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.8 }}
+                >
+                  <span className="inline-block px-4 py-1.5 bg-red-50 text-red-600 text-xs font-black uppercase tracking-[0.3em] rounded-full mb-6">
+                    Nguyễn Vy Luxury
+                  </span>
+                  <h2 className="text-4xl md:text-6xl lg:text-7xl font-black text-slate-900 leading-[1.1] tracking-tight mb-6">
+                    Dịch Vụ Xe <br />
+                    <span className="text-red-600 italic">Hạng Sang</span> <br />
+                    Giá Bình Dân
+                  </h2>
+                  <p className="text-lg text-slate-600 max-w-xl mx-auto lg:mx-0 mb-8 font-medium leading-relaxed">
+                    Trải nghiệm hành trình đẳng cấp với đội ngũ tài xế chuyên nghiệp. 
+                    Cam kết giá tốt nhất thị trường, phục vụ 24/7.
+                  </p>
+
+                  <div className="flex flex-wrap justify-center lg:justify-start gap-4 mb-10">
+                    <div className="flex items-center gap-2 px-4 py-2 bg-white rounded-xl shadow-sm border border-slate-100">
+                      <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                      <span className="text-xs font-bold text-slate-700">Sẵn sàng phục vụ</span>
+                    </div>
+                    <div className="flex items-center gap-2 px-4 py-2 bg-white rounded-xl shadow-sm border border-slate-100">
+                      <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
+                      <span className="text-xs font-bold text-slate-700">4.9/5 Đánh giá</span>
+                    </div>
+                  </div>
+                </motion.div>
+              </div>
+
+              {/* Booking Form */}
+              <motion.div 
+                id="booking"
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.2 }}
+                className="bg-white rounded-[2.5rem] shadow-[0_32px_64px_-16px_rgba(0,0,0,0.1)] p-8 md:p-10 max-w-md w-full border border-white"
+              >
+                <div className="mb-8">
+                  <h3 className="text-2xl font-black text-slate-900 flex items-center gap-3 tracking-tight">
+                    <div className="bg-red-600 p-2 rounded-xl">
+                      <Car className="text-white w-6 h-6" />
+                    </div>
+                    Báo Giá Nhanh
+                  </h3>
+                  <p className="text-slate-500 text-sm mt-2 font-medium">Nhập thông tin để nhận báo giá tự động</p>
+                </div>
+                
+                <form className="space-y-5" onSubmit={(e) => e.preventDefault()}>
+                  <div>
+                    <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">Số điện thoại liên hệ</label>
+                    <div className="relative group">
+                      <Phone className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-red-500 transition-colors w-5 h-5" />
+                      <input 
+                        type="tel" 
+                        value={phone}
+                        onChange={(e) => setPhone(e.target.value)}
+                        placeholder="09xx xxx xxx"
+                        className="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-red-500/5 focus:border-red-500 focus:bg-white transition-all font-bold text-slate-900 placeholder:text-slate-300"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-5">
+                    <LocationSelector 
+                      label="Điểm đón khách" 
+                      icon={MapPin} 
+                      value={pickup}
+                      onChange={setPickup}
+                    />
+                    
+                    <LocationSelector 
+                      label="Điểm đến dự kiến" 
+                      icon={Search} 
+                      value={destination}
+                      onChange={setDestination}
                     />
                   </div>
-                </div>
+                </form>
 
-                <div className="space-y-4">
-                  <LocationSelector 
-                    label="Điểm đón" 
-                    icon={MapPin} 
-                    value={pickup}
-                    onChange={setPickup}
-                  />
-                  
-                  <LocationSelector 
-                    label="Điểm đến" 
-                    icon={Search} 
-                    value={destination}
-                    onChange={setDestination}
-                  />
-                </div>
-              </form>
-
-              <button 
-                type="button"
-                disabled={isLoading}
-                onClick={handleEstimate}
-                className="w-full bg-red-600 hover:bg-red-700 disabled:bg-slate-400 text-white font-black py-4 rounded-xl shadow-lg shadow-red-200 transition-all transform hover:-translate-y-1 active:scale-95 uppercase tracking-wider mt-6 mb-4 flex items-center justify-center gap-2"
-              >
-                {isLoading ? (
-                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                ) : (
-                  <Search size={20} />
-                )}
-                {isLoading ? 'Đang tính toán...' : 'CLICK VÀO XEM BÁO GIÁ'}
-              </button>
-
-              {error && (
-                <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-600 text-xs rounded-lg font-medium">
-                  {error}
-                </div>
-              )}
-
-              {calcResult && (
-                <motion.div 
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: 'auto' }}
-                  className="mb-6 bg-slate-50 rounded-xl p-4 border border-slate-200 space-y-3"
+                <button 
+                  type="button"
+                  disabled={isLoading}
+                  onClick={handleEstimate}
+                  className="w-full bg-red-600 hover:bg-red-700 disabled:bg-slate-300 text-white font-black py-5 rounded-2xl shadow-xl shadow-red-200 transition-all transform hover:-translate-y-1 active:scale-95 uppercase tracking-widest mt-8 mb-4 flex items-center justify-center gap-3"
                 >
-                  <div className="space-y-2">
-                    <div className="flex flex-col text-xs">
-                      <span className="text-slate-500 font-bold uppercase text-[10px]">Điểm đón:</span>
-                      <span className="font-medium text-slate-900">{pickup.ward}, {pickup.district}, {pickup.province}</span>
-                    </div>
-                    <div className="flex flex-col text-xs">
-                      <span className="text-slate-500 font-bold uppercase text-[10px]">Điểm đến:</span>
-                      <span className="font-medium text-slate-900">{destination.ward}, {destination.district}, {destination.province}</span>
-                    </div>
-                    <div className="pt-2 border-t border-slate-200 flex flex-col gap-2">
-                      <div className="flex justify-between items-center">
-                        <span className="text-xs font-bold text-slate-900 uppercase">Quãng đường:</span>
-                        <span className="text-sm font-bold text-slate-700">{calcResult.distance} km</span>
-                      </div>
-                      <div className="flex justify-between items-center">
-                        <span className="text-xs font-bold text-slate-900 uppercase">TỔNG THANH TOÁN:</span>
-                        <span className="text-lg font-black text-red-600">{calcResult.roundedPrice.toLocaleString('vi-VN')}đ</span>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <button 
-                    onClick={() => {
-                      const message = `Chào Nguyễn Vy Luxury, tôi muốn đặt xe:\n- Điểm đón: ${pickup.ward}, ${pickup.district}, ${pickup.province}\n- Điểm đến: ${destination.ward}, ${destination.district}, ${destination.province}\n- Quãng đường dự kiến: ${calcResult.distance} km\n- TỔNG THANH TOÁN: ${calcResult.roundedPrice.toLocaleString('vi-VN')}đ`;
-                      const encodedMessage = encodeURIComponent(message);
-                      window.open(`https://zalo.me/0937243749?text=${encodedMessage}`, '_blank');
-                    }}
-                    className="w-full mt-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold py-2 rounded-lg transition-all flex items-center justify-center gap-2"
+                  {isLoading ? (
+                    <div className="w-6 h-6 border-3 border-white border-t-transparent rounded-full animate-spin"></div>
+                  ) : (
+                    <Search size={22} strokeWidth={3} />
+                  )}
+                  {isLoading ? 'Đang tính toán...' : 'XEM BÁO GIÁ NGAY'}
+                </button>
+
+                {error && (
+                  <motion.div 
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="p-4 bg-red-50 border border-red-100 text-red-600 text-xs rounded-xl font-bold flex items-center gap-2"
                   >
-                    <ZaloIcon size={24} />
-                    GỬI YÊU CẦU QUA ZALO
-                  </button>
-                </motion.div>
-              )}
-              <p className="text-center text-[10px] text-slate-400 mt-4 flex items-center justify-center gap-1">
-                <ZaloIcon size={16} />
-                * Nhấn để kết nối Zalo và nhận báo giá ngay lập tức.
-              </p>
-            </motion.div>
+                    <div className="w-1.5 h-1.5 bg-red-600 rounded-full"></div>
+                    {error}
+                  </motion.div>
+                )}
+
+                {calcResult && (
+                  <motion.div 
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    className="mt-6 bg-slate-50 rounded-2xl p-6 border border-slate-100 space-y-4"
+                  >
+                    <div className="space-y-3">
+                      <div className="flex flex-col">
+                        <span className="text-slate-400 font-black uppercase text-[9px] tracking-widest mb-1">Hành trình dự kiến:</span>
+                        <div className="flex items-start gap-2">
+                          <div className="mt-1 w-1.5 h-1.5 bg-red-600 rounded-full shrink-0"></div>
+                          <span className="text-sm font-bold text-slate-900">{pickup.ward}, {normalizeDistrictName(pickup.district)}</span>
+                        </div>
+                        <div className="ml-[3px] my-1 w-px h-3 bg-slate-200"></div>
+                        <div className="flex items-start gap-2">
+                          <div className="mt-1 w-1.5 h-1.5 bg-slate-400 rounded-full shrink-0"></div>
+                          <span className="text-sm font-bold text-slate-900">{destination.ward}, {normalizeDistrictName(destination.district)}</span>
+                        </div>
+                      </div>
+                      
+                      <div className="pt-4 border-t border-slate-200 flex flex-col gap-3">
+                        <div className="flex justify-between items-center">
+                          <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Quãng đường:</span>
+                          <span className="text-sm font-black text-slate-700">{calcResult.distance} km</span>
+                        </div>
+                        <div className="flex justify-between items-end">
+                          <span className="text-[10px] font-black text-red-600 uppercase tracking-widest mb-1">TỔNG THANH TOÁN:</span>
+                          <span className="text-3xl font-black text-red-600 tracking-tighter">{calcResult.roundedPrice.toLocaleString('vi-VN')}đ</span>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <button 
+                      onClick={() => {
+                        const message = `Chào Nguyễn Vy Luxury, tôi muốn đặt xe:\n- SĐT: ${phone}\n- Điểm đón: ${calcResult.pickup}\n- Điểm đến: ${calcResult.destination}\n- Quãng đường: ${calcResult.distance} km\n- TỔNG THANH TOÁN: ${calcResult.roundedPrice.toLocaleString('vi-VN')}đ`;
+                        const encodedMessage = encodeURIComponent(message);
+                        window.open(`https://zalo.me/0937243749?text=${encodedMessage}`, '_blank');
+                      }}
+                      className="w-full bg-[#0068FF] hover:bg-[#005ae0] text-white text-xs font-black py-4 rounded-xl transition-all flex items-center justify-center gap-2 shadow-lg shadow-blue-100"
+                    >
+                      <ZaloIcon size={24} />
+                      ĐẶT XE QUA ZALO NGAY
+                    </button>
+                  </motion.div>
+                )}
+                
+                <div className="text-center text-[10px] text-slate-400 mt-6 font-bold flex items-center justify-center gap-2">
+                  <div className="w-1 h-1 bg-slate-300 rounded-full"></div>
+                  Cam kết không phát sinh chi phí
+                  <div className="w-1 h-1 bg-slate-300 rounded-full"></div>
+                </div>
+              </motion.div>
+            </div>
           </div>
         </section>
 
@@ -418,7 +626,7 @@ export default function App() {
                 className="mb-10"
               >
                 <h2 className="text-2xl font-black text-red-600 uppercase tracking-[0.2em] mb-2">
-                  Tuyến cố định giá rẻ
+                  Tuyến cố định giá rẽ
                 </h2>
                 <div className="w-20 h-1 bg-red-600 mx-auto rounded-full"></div>
               </motion.div>
@@ -432,15 +640,15 @@ export default function App() {
                   className="bg-slate-50 p-8 rounded-[2rem] border border-slate-100 flex flex-col items-center gap-5 shadow-sm hover:shadow-md transition-all group"
                 >
                   <div className="text-sm font-bold text-slate-900 flex items-center gap-3 bg-white px-4 py-2 rounded-full shadow-sm">
-                    Sài Gòn <span className="text-red-600 animate-pulse">➡️</span> Sóc Trăng
+                    Sài Gòn <span className="text-red-600 animate-pulse">➡️</span> Cần Thơ
                   </div>
                   <div className="flex flex-col items-center">
                     <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Giá trọn gói</span>
-                    <div className="text-3xl font-black text-slate-900">1.800.000đ</div>
+                    <div className="text-3xl font-black text-slate-900">1.400.000đ</div>
                   </div>
                   <button 
                     onClick={() => {
-                      const message = `Chào Nguyễn Vy Luxury, tôi muốn đặt xe tuyến cố định:\n- Lộ trình: Trung Tâm Sài Gòn ➡️ Trung Tâm Sóc Trăng\n- Giá: 1.800.000đ`;
+                      const message = `Chào Nguyễn Vy Luxury, tôi muốn đặt xe tuyến cố định:\n- Lộ trình: Trung Tâm Sài Gòn ➡️ Trung Tâm Cần Thơ\n- Giá: 1.400.000đ`;
                       window.open(`https://zalo.me/0937243749?text=${encodeURIComponent(message)}`, '_blank');
                     }}
                     className="w-full bg-red-600 text-white py-4 rounded-2xl font-black hover:bg-red-700 transition-all uppercase text-sm tracking-widest shadow-lg shadow-red-100 group-hover:scale-[1.02] active:scale-95"
@@ -457,15 +665,15 @@ export default function App() {
                   className="bg-slate-50 p-8 rounded-[2rem] border border-slate-100 flex flex-col items-center gap-5 shadow-sm hover:shadow-md transition-all group"
                 >
                   <div className="text-sm font-bold text-slate-900 flex items-center gap-3 bg-white px-4 py-2 rounded-full shadow-sm">
-                    Sài Gòn <span className="text-red-600 animate-pulse">➡️</span> Cần Thơ
+                    Sài Gòn <span className="text-red-600 animate-pulse">➡️</span> Sóc Trăng
                   </div>
                   <div className="flex flex-col items-center">
                     <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Giá trọn gói</span>
-                    <div className="text-3xl font-black text-slate-900">1.400.000đ</div>
+                    <div className="text-3xl font-black text-slate-900">1.800.000đ</div>
                   </div>
                   <button 
                     onClick={() => {
-                      const message = `Chào Nguyễn Vy Luxury, tôi muốn đặt xe tuyến cố định:\n- Lộ trình: Trung Tâm Sài Gòn ➡️ Trung Tâm Cần Thơ\n- Giá: 1.400.000đ`;
+                      const message = `Chào Nguyễn Vy Luxury, tôi muốn đặt xe tuyến cố định:\n- Lộ trình: Trung Tâm Sài Gòn ➡️ Trung Tâm Sóc Trăng\n- Giá: 1.800.000đ`;
                       window.open(`https://zalo.me/0937243749?text=${encodeURIComponent(message)}`, '_blank');
                     }}
                     className="w-full bg-red-600 text-white py-4 rounded-2xl font-black hover:bg-red-700 transition-all uppercase text-sm tracking-widest shadow-lg shadow-red-100 group-hover:scale-[1.02] active:scale-95"
@@ -514,7 +722,7 @@ export default function App() {
                 <h1 className="text-2xl font-black tracking-tighter">NGUYỄN VY LUXURY</h1>
               </div>
               <p className="text-slate-400 text-sm leading-relaxed">
-                Dịch vụ cho thuê xe du lịch hàng đầu khu vực Miền Tây. 
+                Dịch vụ cho thuê xe du lịch hàng đầu khu vực TP. Hồ Chí Minh và các tỉnh Miền Tây. 
                 Uy tín - Chất lượng - Tận tâm.
               </p>
             </div>
@@ -522,14 +730,27 @@ export default function App() {
               <h5 className="text-lg font-bold mb-6">Liên hệ</h5>
               <ul className="space-y-4 text-slate-400 text-sm">
                 <li className="flex items-center gap-3">
-                  <Phone size={18} className="text-red-500" /> 0937 243 749
+                  <Phone size={18} className="text-red-500" /> 
+                  <a href="tel:0937243749" className="hover:text-white transition-colors">Hotline: 0937 243 749</a>
                 </li>
                 <li className="flex items-center gap-3">
-                  <ZaloIcon size={24} />
-                  <a href="https://zalo.me/0937243749" target="_blank" className="hover:text-blue-500 transition-colors">Zalo: 0937 243 749</a>
+                  <ZaloIcon size={20} />
+                  <a href="https://zalo.me/0937243749" target="_blank" className="hover:text-blue-400 transition-colors">Zalo: 0937 243 749</a>
                 </li>
                 <li className="flex items-center gap-3">
-                  <MapPin size={18} className="text-red-500" /> TP. Cần Thơ & Các tỉnh Miền Tây
+                  <WhatsAppIcon size={20} />
+                  <a href="https://wa.me/84937243749" target="_blank" className="hover:text-green-400 transition-colors">WhatsApp: 0937 243 749</a>
+                </li>
+                <li className="flex items-center gap-3">
+                  <FacebookIcon size={20} />
+                  <a href="https://www.facebook.com/Nguyenvyfamily" target="_blank" className="hover:text-blue-500 transition-colors">Facebook: Nguyenvyfamily</a>
+                </li>
+                <li className="flex items-center gap-3">
+                  <LineIcon size={20} />
+                  <a href="https://line.me/ti/p/QeBK3LeCL6" target="_blank" className="hover:text-green-500 transition-colors">Line ID: Nguyễn Vy</a>
+                </li>
+                <li className="flex items-center gap-3">
+                  <MapPin size={18} className="text-red-500" /> TP. Hồ Chí Minh và các tỉnh Miền Tây
                 </li>
               </ul>
             </div>
@@ -549,36 +770,90 @@ export default function App() {
         </div>
       </footer>
 
-      {/* Floating Buttons */}
-      <div className="fixed bottom-6 left-6 z-50 flex flex-col gap-4">
+      {/* Floating Contact Stack */}
+      <div className="fixed bottom-6 right-6 z-50 flex flex-col gap-3 items-end">
+        {/* Phone */}
         <motion.a 
           href="tel:0937243749"
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
-          className="bg-red-600 text-white p-4 rounded-full shadow-2xl flex items-center justify-center relative group"
+          className="bg-red-600 text-white p-3.5 rounded-full shadow-2xl flex items-center justify-center relative group"
         >
           <Phone size={24} fill="currentColor" />
-          <span className="absolute left-16 bg-red-600 text-white px-4 py-2 rounded-lg font-bold whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none shadow-xl">
+          <span className="absolute right-14 bg-red-600 text-white px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none shadow-xl">
             Gọi ngay: 0937 243 749
           </span>
           <span className="absolute inset-0 rounded-full bg-red-600 animate-ping opacity-20"></span>
         </motion.a>
-      </div>
 
-      <div className="fixed bottom-6 right-6 z-50">
+        {/* Zalo */}
         <motion.a 
           href="https://zalo.me/0937243749"
           target="_blank"
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.1 }}
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
-          className="shadow-2xl flex items-center justify-center relative group"
+          className="bg-white p-0.5 rounded-full shadow-2xl flex items-center justify-center relative group border border-blue-100"
         >
-          <ZaloIcon size={56} />
-          <span className="absolute right-20 bg-white text-blue-600 px-4 py-2 rounded-lg font-bold whitespace-nowrap opacity-100 transition-opacity shadow-xl border border-blue-100 flex items-center gap-2">
-            <span className="w-2 h-2 bg-blue-600 rounded-full animate-pulse"></span>
-            Chat Zalo ngay
+          <ZaloIcon size={48} />
+          <span className="absolute right-14 bg-white text-blue-600 px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none shadow-xl border border-blue-50">
+            Chat Zalo
           </span>
-          <span className="absolute inset-0 rounded-full bg-blue-600 animate-ping opacity-20 -z-10"></span>
+        </motion.a>
+
+        {/* Facebook */}
+        <motion.a 
+          href="https://www.facebook.com/Nguyenvyfamily"
+          target="_blank"
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.2 }}
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
+          className="bg-white p-2 rounded-full shadow-2xl flex items-center justify-center relative group border border-blue-50"
+        >
+          <FacebookIcon size={32} />
+          <span className="absolute right-14 bg-white text-blue-800 px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none shadow-xl border border-blue-50">
+            Facebook
+          </span>
+        </motion.a>
+
+        {/* WhatsApp */}
+        <motion.a 
+          href="https://wa.me/84937243749"
+          target="_blank"
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.3 }}
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
+          className="bg-white p-2 rounded-full shadow-2xl flex items-center justify-center relative group border border-green-50"
+        >
+          <WhatsAppIcon size={32} />
+          <span className="absolute right-14 bg-white text-green-600 px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none shadow-xl border border-green-50">
+            WhatsApp
+          </span>
+        </motion.a>
+
+        {/* Line */}
+        <motion.a 
+          href="https://line.me/ti/p/QeBK3LeCL6"
+          target="_blank"
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.4 }}
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
+          className="bg-white p-2 rounded-full shadow-2xl flex items-center justify-center relative group border border-green-50"
+        >
+          <LineIcon size={32} />
+          <span className="absolute right-14 bg-white text-green-500 px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none shadow-xl border border-green-50">
+            Line
+          </span>
         </motion.a>
       </div>
     </div>
