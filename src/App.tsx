@@ -97,8 +97,8 @@ export default function App() {
   const [error, setError] = useState<string | null>(null);
   const [calcResult, setCalcResult] = useState<{
     distance: number;
-    rate: number;
-    basePrice: number;
+    pickup: string;
+    destination: string;
     roundedPrice: number;
   } | null>(null);
 
@@ -142,15 +142,13 @@ export default function App() {
 
     return {
       distance: Math.round(distInKm * 10) / 10,
-      rate,
-      basePrice,
       roundedPrice
     };
   };
 
   const handleEstimate = async () => {
-    if (!pickup.province || !destination.province) {
-      setError("Vui lòng chọn đầy đủ điểm đón và điểm đến.");
+    if (!pickup.province || !pickup.district || !pickup.ward || !destination.province || !destination.district || !destination.ward) {
+      setError("Vui lòng chọn đầy đủ Tỉnh/Huyện/Xã cho cả điểm đón và điểm đến.");
       return;
     }
 
@@ -178,8 +176,14 @@ export default function App() {
     }
 
     const distInKm = distInMeters / 1000;
-    const result = calculateFinalPrice(distInKm);
-    setCalcResult(result);
+    const pricing = calculateFinalPrice(distInKm);
+    
+    setCalcResult({
+      distance: pricing.distance,
+      roundedPrice: pricing.roundedPrice,
+      pickup: pickupAddr,
+      destination: destAddr
+    });
     setIsLoading(false);
   };
 
@@ -359,20 +363,32 @@ export default function App() {
                 <motion.div 
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: 'auto' }}
-                  className="mb-6 bg-slate-50 rounded-xl p-4 border border-slate-200 space-y-2"
+                  className="mb-6 bg-slate-50 rounded-xl p-4 border border-slate-200 space-y-3"
                 >
-                  <div className="flex justify-between text-xs">
-                    <span className="text-slate-500">Quãng đường dự kiến:</span>
-                    <span className="font-bold">{calcResult.distance} km</span>
-                  </div>
-                  <div className="pt-2 border-t border-slate-200 flex justify-between items-center">
-                    <span className="text-xs font-bold text-slate-900 uppercase">TỔNG THANH TOÁN:</span>
-                    <span className="text-lg font-black text-red-600">{calcResult.roundedPrice.toLocaleString('vi-VN')}đ</span>
+                  <div className="space-y-2">
+                    <div className="flex flex-col text-xs">
+                      <span className="text-slate-500 font-bold uppercase text-[10px]">Điểm đón:</span>
+                      <span className="font-medium text-slate-900">{pickup.ward}, {pickup.district}, {pickup.province}</span>
+                    </div>
+                    <div className="flex flex-col text-xs">
+                      <span className="text-slate-500 font-bold uppercase text-[10px]">Điểm đến:</span>
+                      <span className="font-medium text-slate-900">{destination.ward}, {destination.district}, {destination.province}</span>
+                    </div>
+                    <div className="pt-2 border-t border-slate-200 flex flex-col gap-2">
+                      <div className="flex justify-between items-center">
+                        <span className="text-xs font-bold text-slate-900 uppercase">Quãng đường:</span>
+                        <span className="text-sm font-bold text-slate-700">{calcResult.distance} km</span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-xs font-bold text-slate-900 uppercase">TỔNG THANH TOÁN:</span>
+                        <span className="text-lg font-black text-red-600">{calcResult.roundedPrice.toLocaleString('vi-VN')}đ</span>
+                      </div>
+                    </div>
                   </div>
                   
                   <button 
                     onClick={() => {
-                      const message = `Chào Nguyễn Vy Luxury, tôi muốn đặt xe:\n- Số điện thoại: ${phone || 'Chưa nhập'}\n- Điểm đón: ${pickup.ward}, ${pickup.district}, ${pickup.province}\n- Điểm đến: ${destination.ward}, ${destination.district}, ${destination.province}\n\nTHÔNG TIN BÁO GIÁ:\n- Quãng đường: ${calcResult.distance} km\n- TỔNG THANH TOÁN: ${calcResult.roundedPrice.toLocaleString('vi-VN')}đ`;
+                      const message = `Chào Nguyễn Vy Luxury, tôi muốn đặt xe:\n- Điểm đón: ${pickup.ward}, ${pickup.district}, ${pickup.province}\n- Điểm đến: ${destination.ward}, ${destination.district}, ${destination.province}\n- Quãng đường dự kiến: ${calcResult.distance} km\n- TỔNG THANH TOÁN: ${calcResult.roundedPrice.toLocaleString('vi-VN')}đ`;
                       const encodedMessage = encodeURIComponent(message);
                       window.open(`https://zalo.me/0937243749?text=${encodedMessage}`, '_blank');
                     }}
