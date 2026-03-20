@@ -407,6 +407,77 @@ export default function App() {
           </div>
         </section>
 
+        {/* Fixed Routes Section */}
+        <section className="py-12 bg-white">
+          <div className="container mx-auto px-4">
+            <div className="max-w-4xl mx-auto text-center">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                className="mb-10"
+              >
+                <h2 className="text-2xl font-black text-red-600 uppercase tracking-[0.2em] mb-2">
+                  Tuyến cố định giá rẻ
+                </h2>
+                <div className="w-20 h-1 bg-red-600 mx-auto rounded-full"></div>
+              </motion.div>
+              
+              <div className="grid md:grid-cols-2 gap-8">
+                {/* Route 1 */}
+                <motion.div 
+                  initial={{ opacity: 0, x: -20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  className="bg-slate-50 p-8 rounded-[2rem] border border-slate-100 flex flex-col items-center gap-5 shadow-sm hover:shadow-md transition-all group"
+                >
+                  <div className="text-sm font-bold text-slate-900 flex items-center gap-3 bg-white px-4 py-2 rounded-full shadow-sm">
+                    Sài Gòn <span className="text-red-600 animate-pulse">➡️</span> Sóc Trăng
+                  </div>
+                  <div className="flex flex-col items-center">
+                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Giá trọn gói</span>
+                    <div className="text-3xl font-black text-slate-900">1.800.000đ</div>
+                  </div>
+                  <button 
+                    onClick={() => {
+                      const message = `Chào Nguyễn Vy Luxury, tôi muốn đặt xe tuyến cố định:\n- Lộ trình: Trung Tâm Sài Gòn ➡️ Trung Tâm Sóc Trăng\n- Giá: 1.800.000đ`;
+                      window.open(`https://zalo.me/0937243749?text=${encodeURIComponent(message)}`, '_blank');
+                    }}
+                    className="w-full bg-red-600 text-white py-4 rounded-2xl font-black hover:bg-red-700 transition-all uppercase text-sm tracking-widest shadow-lg shadow-red-100 group-hover:scale-[1.02] active:scale-95"
+                  >
+                    " Book Xe "
+                  </button>
+                </motion.div>
+
+                {/* Route 2 */}
+                <motion.div 
+                  initial={{ opacity: 0, x: 20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  className="bg-slate-50 p-8 rounded-[2rem] border border-slate-100 flex flex-col items-center gap-5 shadow-sm hover:shadow-md transition-all group"
+                >
+                  <div className="text-sm font-bold text-slate-900 flex items-center gap-3 bg-white px-4 py-2 rounded-full shadow-sm">
+                    Sài Gòn <span className="text-red-600 animate-pulse">➡️</span> Cần Thơ
+                  </div>
+                  <div className="flex flex-col items-center">
+                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Giá trọn gói</span>
+                    <div className="text-3xl font-black text-slate-900">1.400.000đ</div>
+                  </div>
+                  <button 
+                    onClick={() => {
+                      const message = `Chào Nguyễn Vy Luxury, tôi muốn đặt xe tuyến cố định:\n- Lộ trình: Trung Tâm Sài Gòn ➡️ Trung Tâm Cần Thơ\n- Giá: 1.400.000đ`;
+                      window.open(`https://zalo.me/0937243749?text=${encodeURIComponent(message)}`, '_blank');
+                    }}
+                    className="w-full bg-red-600 text-white py-4 rounded-2xl font-black hover:bg-red-700 transition-all uppercase text-sm tracking-widest shadow-lg shadow-red-100 group-hover:scale-[1.02] active:scale-95"
+                  >
+                    " Book Xe "
+                  </button>
+                </motion.div>
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* Features Section */}
         <section className="py-20 bg-slate-50">
           <div className="container mx-auto px-4">
