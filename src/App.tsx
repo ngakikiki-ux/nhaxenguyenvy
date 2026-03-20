@@ -8,6 +8,17 @@ import { Phone, MapPin, Car, Menu, X, ChevronDown, MessageCircle, Search } from 
 import { motion, AnimatePresence } from 'motion/react';
 import { locations } from './data/locations';
 
+const ZaloIcon = ({ size = 16, className = "" }: { size?: number; className?: string }) => (
+  <img 
+    src="https://upload.wikimedia.org/wikipedia/commons/9/91/Icon_of_Zalo.svg" 
+    alt="Zalo" 
+    width={size} 
+    height={size} 
+    className={`object-contain ${className}`}
+    referrerPolicy="no-referrer"
+  />
+);
+
 function LocationSelector({ 
   label, 
   icon: Icon, 
@@ -208,19 +219,29 @@ export default function App() {
             </div>
           </div>
 
-          <div className="hidden md:flex items-center gap-8">
+          <div className="hidden md:flex items-center gap-6">
             <nav className="flex gap-6 font-semibold text-sm">
               <a href="#" className="hover:text-red-600 transition-colors">Trang chủ</a>
               <a href="#booking" className="hover:text-red-600 transition-colors">Đặt xe</a>
               <a href="#" className="hover:text-red-600 transition-colors">Liên hệ</a>
             </nav>
-            <a 
-              href="tel:0937243749" 
-              className="flex items-center gap-2 bg-red-600 text-white px-5 py-2.5 rounded-full font-bold hover:bg-red-700 transition-all shadow-lg shadow-red-200"
-            >
-              <Phone size={18} fill="currentColor" />
-              0937 243 749
-            </a>
+            <div className="flex items-center gap-3">
+              <a 
+                href="tel:0937243749" 
+                className="flex items-center gap-2 bg-red-600 text-white px-4 py-2 rounded-full font-bold hover:bg-red-700 transition-all shadow-lg shadow-red-200 text-sm"
+              >
+                <Phone size={16} fill="currentColor" />
+                0937 243 749
+              </a>
+              <a 
+                href="https://zalo.me/0937243749" 
+                target="_blank"
+                className="flex items-center gap-2 text-blue-600 font-bold hover:text-blue-700 transition-all text-sm"
+              >
+                <ZaloIcon size={24} />
+                Zalo
+              </a>
+            </div>
           </div>
 
           <button 
@@ -246,6 +267,9 @@ export default function App() {
               <a href="#booking" onClick={() => setMobileMenuOpen(false)}>Đặt xe</a>
               <a href="tel:0937243749" className="text-red-600 flex items-center gap-2">
                 <Phone fill="currentColor" /> 0937 243 749
+              </a>
+              <a href="https://zalo.me/0937243749" target="_blank" className="text-blue-600 flex items-center gap-2">
+                <ZaloIcon size={32} /> Chat Zalo
               </a>
             </nav>
           </motion.div>
@@ -315,12 +339,12 @@ export default function App() {
                 type="button"
                 disabled={isLoading}
                 onClick={handleEstimate}
-                className="w-full bg-green-600 hover:bg-green-700 disabled:bg-slate-400 text-white font-black py-4 rounded-xl shadow-lg shadow-green-200 transition-all transform hover:-translate-y-1 active:scale-95 uppercase tracking-wider mt-6 mb-4 flex items-center justify-center gap-2"
+                className="w-full bg-red-600 hover:bg-red-700 disabled:bg-slate-400 text-white font-black py-4 rounded-xl shadow-lg shadow-red-200 transition-all transform hover:-translate-y-1 active:scale-95 uppercase tracking-wider mt-6 mb-4 flex items-center justify-center gap-2"
               >
                 {isLoading ? (
                   <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                 ) : (
-                  <MessageCircle size={20} fill="currentColor" />
+                  <Search size={20} />
                 )}
                 {isLoading ? 'Đang tính toán...' : 'CLICK VÀO XEM BÁO GIÁ'}
               </button>
@@ -341,10 +365,6 @@ export default function App() {
                     <span className="text-slate-500">Quãng đường dự kiến:</span>
                     <span className="font-bold">{calcResult.distance} km</span>
                   </div>
-                  <div className="flex justify-between text-xs">
-                    <span className="text-slate-500">Đơn giá áp dụng:</span>
-                    <span className="font-bold">{calcResult.rate.toLocaleString('vi-VN')}đ/km</span>
-                  </div>
                   <div className="pt-2 border-t border-slate-200 flex justify-between items-center">
                     <span className="text-xs font-bold text-slate-900 uppercase">TỔNG THANH TOÁN:</span>
                     <span className="text-lg font-black text-red-600">{calcResult.roundedPrice.toLocaleString('vi-VN')}đ</span>
@@ -352,18 +372,19 @@ export default function App() {
                   
                   <button 
                     onClick={() => {
-                      const message = `Chào Nguyễn Vy Luxury, tôi muốn đặt xe:\n- Số điện thoại: ${phone || 'Chưa nhập'}\n- Điểm đón: ${pickup.ward}, ${pickup.district}, ${pickup.province}\n- Điểm đến: ${destination.ward}, ${destination.district}, ${destination.province}\n\nTHÔNG TIN BÁO GIÁ:\n- Quãng đường: ${calcResult.distance} km\n- Đơn giá: ${calcResult.rate.toLocaleString('vi-VN')}đ/km\n- TỔNG THANH TOÁN: ${calcResult.roundedPrice.toLocaleString('vi-VN')}đ`;
+                      const message = `Chào Nguyễn Vy Luxury, tôi muốn đặt xe:\n- Số điện thoại: ${phone || 'Chưa nhập'}\n- Điểm đón: ${pickup.ward}, ${pickup.district}, ${pickup.province}\n- Điểm đến: ${destination.ward}, ${destination.district}, ${destination.province}\n\nTHÔNG TIN BÁO GIÁ:\n- Quãng đường: ${calcResult.distance} km\n- TỔNG THANH TOÁN: ${calcResult.roundedPrice.toLocaleString('vi-VN')}đ`;
                       const encodedMessage = encodeURIComponent(message);
                       window.open(`https://zalo.me/0937243749?text=${encodedMessage}`, '_blank');
                     }}
                     className="w-full mt-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold py-2 rounded-lg transition-all flex items-center justify-center gap-2"
                   >
-                    <MessageCircle size={16} fill="currentColor" />
+                    <ZaloIcon size={24} />
                     GỬI YÊU CẦU QUA ZALO
                   </button>
                 </motion.div>
               )}
-              <p className="text-center text-[10px] text-slate-400 mt-4">
+              <p className="text-center text-[10px] text-slate-400 mt-4 flex items-center justify-center gap-1">
+                <ZaloIcon size={16} />
                 * Nhấn để kết nối Zalo và nhận báo giá ngay lập tức.
               </p>
             </motion.div>
@@ -417,6 +438,10 @@ export default function App() {
                   <Phone size={18} className="text-red-500" /> 0937 243 749
                 </li>
                 <li className="flex items-center gap-3">
+                  <ZaloIcon size={24} />
+                  <a href="https://zalo.me/0937243749" target="_blank" className="hover:text-blue-500 transition-colors">Zalo: 0937 243 749</a>
+                </li>
+                <li className="flex items-center gap-3">
                   <MapPin size={18} className="text-red-500" /> TP. Cần Thơ & Các tỉnh Miền Tây
                 </li>
               </ul>
@@ -459,14 +484,14 @@ export default function App() {
           target="_blank"
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
-          className="bg-blue-600 text-white p-4 rounded-full shadow-2xl flex items-center justify-center relative group"
+          className="shadow-2xl flex items-center justify-center relative group"
         >
-          <MessageCircle size={28} fill="currentColor" />
-          <span className="absolute right-16 bg-blue-600 text-white px-4 py-2 rounded-lg font-bold whitespace-nowrap opacity-100 transition-opacity shadow-xl flex items-center gap-2">
-            <span className="w-2 h-2 bg-white rounded-full animate-pulse"></span>
+          <ZaloIcon size={56} />
+          <span className="absolute right-20 bg-white text-blue-600 px-4 py-2 rounded-lg font-bold whitespace-nowrap opacity-100 transition-opacity shadow-xl border border-blue-100 flex items-center gap-2">
+            <span className="w-2 h-2 bg-blue-600 rounded-full animate-pulse"></span>
             Chat Zalo ngay
           </span>
-          <span className="absolute inset-0 rounded-full bg-blue-600 animate-ping opacity-40"></span>
+          <span className="absolute inset-0 rounded-full bg-blue-600 animate-ping opacity-20 -z-10"></span>
         </motion.a>
       </div>
     </div>
