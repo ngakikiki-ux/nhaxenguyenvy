@@ -242,10 +242,28 @@ export default function App() {
               transition={{ duration: 0.6, delay: 0.2 }}
               className="bg-white rounded-2xl shadow-2xl p-6 md:p-8 max-w-md mx-auto lg:mr-0"
             >
-              <h3 className="text-2xl font-bold text-slate-900 mb-6 flex items-center gap-2">
+              <h3 className="text-2xl font-bold text-slate-900 mb-2 flex items-center gap-2">
                 <Car className="text-red-600" /> Điền vào xem giá
               </h3>
               
+              <button 
+                type="button"
+                onClick={() => {
+                  let message = `Chào Nguyễn Vy Luxury, tôi muốn xem báo giá xe:\n- Số điện thoại: ${phone || 'Chưa nhập'}\n- Điểm đón: ${pickup.ward}, ${pickup.district}, ${pickup.province}\n- Điểm đến: ${destination.ward}, ${destination.district}, ${destination.province}`;
+                  
+                  if (priceResult) {
+                    message += `\n\nTHÔNG TIN BÁO GIÁ:\n- Số km: ${priceResult.distance} km\n- Đơn giá: ${priceResult.rate.toLocaleString('vi-VN')}đ/km\n- Tiền gốc: ${priceResult.basePrice.toLocaleString('vi-VN')}đ\n- TỔNG THANH TOÁN: ${priceResult.roundedPrice.toLocaleString('vi-VN')}đ`;
+                  }
+                  
+                  const encodedMessage = encodeURIComponent(message);
+                  window.open(`https://zalo.me/0937243749?text=${encodedMessage}`, '_blank');
+                }}
+                className="w-full bg-green-600 hover:bg-green-700 text-white font-black py-4 rounded-xl shadow-lg shadow-green-200 transition-all transform hover:-translate-y-1 active:scale-95 uppercase tracking-wider mb-6 flex items-center justify-center gap-2"
+              >
+                <MessageCircle size={20} fill="currentColor" />
+                XEM BÁO GIÁ
+              </button>
+
               <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
                 <div>
                   <label className="block text-xs font-bold text-slate-500 uppercase mb-1 ml-1">Số điện thoại</label>
@@ -276,63 +294,6 @@ export default function App() {
                     onChange={setDestination}
                   />
                 </div>
-
-                <div>
-                  <label className="block text-xs font-bold text-slate-500 uppercase mb-1 ml-1">Khoảng cách dự kiến (km)</label>
-                  <div className="relative">
-                    <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5" />
-                    <input 
-                      type="number" 
-                      value={distance}
-                      onChange={(e) => setDistance(e.target.value)}
-                      placeholder="Nhập số km"
-                      className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all"
-                    />
-                  </div>
-                </div>
-
-                {priceResult && (
-                  <motion.div 
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: 'auto' }}
-                    className="bg-slate-50 rounded-xl p-4 border border-slate-200 space-y-2"
-                  >
-                    <div className="flex justify-between text-xs">
-                      <span className="text-slate-500">Số km:</span>
-                      <span className="font-bold">{priceResult.distance} km</span>
-                    </div>
-                    <div className="flex justify-between text-xs">
-                      <span className="text-slate-500">Đơn giá áp dụng:</span>
-                      <span className="font-bold">{priceResult.rate.toLocaleString('vi-VN')}đ/km</span>
-                    </div>
-                    <div className="flex justify-between text-xs">
-                      <span className="text-slate-500">Tổng tiền gốc:</span>
-                      <span className="font-bold">{priceResult.basePrice.toLocaleString('vi-VN')}đ</span>
-                    </div>
-                    <div className="pt-2 border-t border-slate-200 flex justify-between items-center">
-                      <span className="text-xs font-bold text-slate-900 uppercase">TỔNG THANH TOÁN:</span>
-                      <span className="text-lg font-black text-red-600">{priceResult.roundedPrice.toLocaleString('vi-VN')}đ</span>
-                    </div>
-                  </motion.div>
-                )}
-
-                <button 
-                  type="button"
-                  onClick={() => {
-                    let message = `Chào Nguyễn Vy Luxury, tôi muốn xem báo giá xe:\n- Số điện thoại: ${phone || 'Chưa nhập'}\n- Điểm đón: ${pickup.ward}, ${pickup.district}, ${pickup.province}\n- Điểm đến: ${destination.ward}, ${destination.district}, ${destination.province}`;
-                    
-                    if (priceResult) {
-                      message += `\n\nTHÔNG TIN BÁO GIÁ:\n- Số km: ${priceResult.distance} km\n- Đơn giá: ${priceResult.rate.toLocaleString('vi-VN')}đ/km\n- Tiền gốc: ${priceResult.basePrice.toLocaleString('vi-VN')}đ\n- TỔNG THANH TOÁN: ${priceResult.roundedPrice.toLocaleString('vi-VN')}đ`;
-                    }
-                    
-                    const encodedMessage = encodeURIComponent(message);
-                    window.open(`https://zalo.me/0937243749?text=${encodedMessage}`, '_blank');
-                  }}
-                  className="w-full bg-green-600 hover:bg-green-700 text-white font-black py-4 rounded-xl shadow-lg shadow-green-200 transition-all transform hover:-translate-y-1 active:scale-95 uppercase tracking-wider mt-4 flex items-center justify-center gap-2"
-                >
-                  <MessageCircle size={20} fill="currentColor" />
-                  XEM BÁO GIÁ
-                </button>
               </form>
               <p className="text-center text-[10px] text-slate-400 mt-4">
                 * Nhấn để kết nối Zalo và nhận báo giá ngay lập tức.
