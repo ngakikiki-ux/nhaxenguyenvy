@@ -156,6 +156,7 @@ export default function App() {
   } | null>(null);
 
   const getCoordinates = async (address: string, fallbackAddress?: string): Promise<[number, number] | null> => {
+    console.log(`[Geocode] Đang tìm tọa độ cho: "${address}"`);
     const fetchCoords = async (addr: string) => {
       try {
         const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(addr)}&limit=1`, {
@@ -165,24 +166,33 @@ export default function App() {
         });
         const data = await response.json();
         if (data && data.length > 0) {
+          console.log(`[Geocode] Thành công: "${addr}" -> [${data[0].lat}, ${data[0].lon}]`);
           return [parseFloat(data[0].lat), parseFloat(data[0].lon)] as [number, number];
         }
+        console.warn(`[Geocode] Không tìm thấy kết quả cho: "${addr}"`);
         return null;
       } catch (err) {
-        console.error("Geocoding error:", err);
+        console.error(`[Geocode] Lỗi API cho "${addr}":`, err);
         return null;
       }
     };
 
-    let coords = await fetchCoords(address);
-    if (!coords && fallbackAddress) {
-      console.log(`Geocoding failed for "${address}", trying fallback: "${fallbackAddress}"`);
-      coords = await fetchCoords(fallbackAddress);
+    const variations = [
+      address,
+      address.replace(/^(Phường|Xã)\s+/i, ''), // Thử bỏ tiền tố Phường/Xã
+      fallbackAddress
+    ].filter((v, i, a) => v && a.indexOf(v) === i) as string[];
+
+    for (const addr of variations) {
+      const coords = await fetchCoords(addr);
+      if (coords) return coords;
     }
-    return coords;
+
+    return null;
   };
 
   const getRouteDistance = async (start: [number, number], end: [number, number]): Promise<number | null> => {
+    console.log(`[Routing] Đang tìm tuyến đường giữa: [${start}] và [${end}]`);
     try {
       const response = await fetch(`https://router.project-osrm.org/route/v1/driving/${start[1]},${start[0]};${end[1]},${end[0]}?overview=false`, {
         headers: {
@@ -191,11 +201,13 @@ export default function App() {
       });
       const data = await response.json();
       if (data.code === 'Ok' && data.routes && data.routes.length > 0) {
+        console.log(`[Routing] Thành công: ${data.routes[0].distance} mét`);
         return data.routes[0].distance; // in meters
       }
+      console.error(`[Routing] Thất bại: ${data.code}`, data);
       return null;
     } catch (err) {
-      console.error("Routing error:", err);
+      console.error("[Routing] Lỗi API:", err);
       return null;
     }
   };
@@ -220,15 +232,79 @@ export default function App() {
     "Sân bay Tân Sơn Nhất": "Sân bay Tân Sơn Nhất, TP. Hồ Chí Minh, Việt Nam"
   };
 
-  const normalizeDistrictName = (name: string) => {
-    // Convert "Cao Lãnh (Thành phố)" -> "Thành phố Cao Lãnh"
-    // Convert "Cao Lãnh (Huyện)" -> "Huyện Cao Lãnh"
-    // Convert "Duyên Hải (Thị xã)" -> "Thị xã Duyên Hải"
-    const match = name.match(/^(.*)\s\((Thành phố|Huyện|Thị xã)\)$/);
+  const normalizeDistrictName = (name: string, provinceName: string) => {
+    const cleanName = name.replace(/[\u{1F300}-\u{1F9FF}]|[\u{2700}-\u{27BF}]|[\u{1F600}-\u{1F64F}]|[\u{1F680}-\u{1F6FF}]|[\u{2600}-\u{26FF}]|[\u{1F1E0}-\u{1F1FF}]/gu, '').trim();
+    
+    // Handle parentheses: "Cao Lãnh (Thành phố)" -> "Thành phố Cao Lãnh"
+    const match = cleanName.match(/^(.*)\s\((Thành phố|Huyện|Thị xã|Quận)\)$/);
     if (match) {
       return `${match[2]} ${match[1]}`;
     }
-    return name;
+
+    // If it's a number like "1", "2", add "Quận"
+    if (/^\d+$/.test(cleanName)) {
+      return `Quận ${cleanName}`;
+    }
+
+    // If it already has a prefix, return it as is
+    if (/^(Thành phố|Huyện|Thị xã|Quận)\s/i.test(cleanName)) {
+      return cleanName;
+    }
+
+    const p = provinceName.toLowerCase();
+    const n = cleanName.toLowerCase();
+
+    // Specific mappings for major cities and Mekong Delta
+    if (p.includes("cần thơ")) {
+      const quans = ["ninh kiều", "bình thủy", "cái răng", "ô môn", "thốt nốt"];
+      if (quans.includes(n)) return `Quận ${cleanName}`;
+      return `Huyện ${cleanName}`;
+    }
+    
+    if (p.includes("hồ chí minh") || p.includes("hcm")) {
+      const quans = ["1", "3", "4", "5", "6", "7", "8", "10", "11", "12", "bình tân", "bình thạnh", "gò vấp", "phú nhuận", "tân bình", "tân phú", "thủ đức"];
+      if (quans.includes(n)) return `Quận ${cleanName}`;
+      return `Huyện ${cleanName}`;
+    }
+
+    // Provincial Capitals (Thành phố)
+    const provincialCapitals: Record<string, string[]> = {
+      "long an": ["tân an"],
+      "tiền giang": ["mỹ tho"],
+      "bến tre": ["bến tre"],
+      "trà vinh": ["trà vinh"],
+      "vĩnh long": ["vĩnh long"],
+      "đồng tháp": ["cao lãnh", "sa đéc", "hồng ngự"],
+      "an giang": ["long xuyên", "châu đốc"],
+      "kiên giang": ["rạch giá", "hà tiên", "phú quốc"],
+      "hậu giang": ["vị thanh", "ngã bảy"],
+      "sóc trăng": ["sóc trăng"],
+      "bạc liêu": ["bạc liêu"],
+      "cà mau": ["cà mau"]
+    };
+
+    // Thị xã
+    const thixas: Record<string, string[]> = {
+      "long an": ["kiến tường"],
+      "tiền giang": ["gò công", "cai lậy"],
+      "trà vinh": ["duyên hải"],
+      "vĩnh long": ["bình minh"],
+      "an giang": ["tân châu"],
+      "hậu giang": ["long mỹ"],
+      "sóc trăng": ["ngã năm", "vĩnh châu"],
+      "bạc liêu": ["giá rai"]
+    };
+
+    for (const [prov, cities] of Object.entries(provincialCapitals)) {
+      if (p.includes(prov) && cities.includes(n)) return `Thành phố ${cleanName}`;
+    }
+
+    for (const [prov, txs] of Object.entries(thixas)) {
+      if (p.includes(prov) && txs.includes(n)) return `Thị xã ${cleanName}`;
+    }
+
+    // Default to Huyện for other cases in provinces
+    return `Huyện ${cleanName}`;
   };
 
   const formatGeocodeAddress = (loc: { province: string; district: string; ward: string }) => {
@@ -239,15 +315,40 @@ export default function App() {
       }
     }
     
-    // Helper to strip emojis and trim
     const clean = (str: string) => str.replace(/[\u{1F300}-\u{1F9FF}]|[\u{2700}-\u{27BF}]|[\u{1F600}-\u{1F64F}]|[\u{1F680}-\u{1F6FF}]|[\u{2600}-\u{26FF}]|[\u{1F1E0}-\u{1F1FF}]/gu, '').trim();
     
+    let province = clean(loc.province);
+    // Normalize Province
+    if (!province.toLowerCase().startsWith("thành phố") && !province.toLowerCase().startsWith("tỉnh")) {
+      const majorCities = ["Cần Thơ", "Hồ Chí Minh", "Hà Nội", "Đà Nẵng", "Hải Phòng"];
+      if (majorCities.some(city => province.includes(city))) {
+        province = "Thành phố " + province.replace(/^TP\.\s*/i, '');
+      } else {
+        province = "Tỉnh " + province;
+      }
+    }
+
+    const district = normalizeDistrictName(loc.district, province);
     const ward = clean(loc.ward);
-    const district = normalizeDistrictName(clean(loc.district));
-    const province = clean(loc.province).replace(/^TP\.\s*/, 'Thành phố ');
     
-    // Format: phường/xã, quận/huyện/thành phố/thị xã, tỉnh/thành, Việt Nam
-    return `${ward}, ${district}, ${province}, Việt Nam`;
+    // Normalize Ward
+    let normalizedWard = ward;
+    if (!/^(Phường|Xã|Thị trấn)\s/i.test(ward)) {
+      if (/^\d+$/.test(ward)) {
+        normalizedWard = "Phường " + ward;
+      } else if (ward.toLowerCase().includes("thị trấn")) {
+        // already has it
+      } else {
+        // Use "Phường" for urban areas (Quận, Thành phố, Thị xã), "Xã" for Huyện
+        if (district.toLowerCase().includes("quận") || district.toLowerCase().includes("thành phố") || district.toLowerCase().includes("thị xã")) {
+          normalizedWard = "Phường " + ward;
+        } else {
+          normalizedWard = "Xã " + ward;
+        }
+      }
+    }
+    
+    return `${normalizedWard}, ${district}, ${province}, Việt Nam`;
   };
 
   const handleEstimate = async () => {
@@ -296,8 +397,8 @@ export default function App() {
     const destAddr = formatGeocodeAddress(destination);
 
     // Fallback addresses (District + Province)
-    const pickupFallback = `${normalizeDistrictName(pickup.district)}, ${pickup.province.replace(/^TP\.\s*/, 'Thành phố ')}, Việt Nam`;
-    const destFallback = `${normalizeDistrictName(destination.district)}, ${destination.province.replace(/^TP\.\s*/, 'Thành phố ')}, Việt Nam`;
+    const pickupFallback = `${normalizeDistrictName(pickup.district, pickup.province)}, ${pickup.province.replace(/^TP\.\s*/, 'Thành phố ')}, Việt Nam`;
+    const destFallback = `${normalizeDistrictName(destination.district, destination.province)}, ${destination.province.replace(/^TP\.\s*/, 'Thành phố ')}, Việt Nam`;
 
     try {
       const startCoords = await getCoordinates(pickupAddr, pickupFallback);
@@ -564,19 +665,24 @@ export default function App() {
                         window.open(`https://zalo.me/0937243749?text=${encodedMessage}`, '_blank');
                       }}
                       animate={{ 
-                        backgroundColor: ["#a855f7", "#ff0000", "#a855f7"],
-                        scale: [1, 1.03, 1],
-                        x: [0, -1, 1, -1, 1, 0]
+                        backgroundColor: ["#ff0000", "#facc15", "#ff0000"],
+                        scale: [1, 1.05, 1],
+                        opacity: [1, 0.7, 1],
+                        boxShadow: [
+                          "0 0 0px rgba(255,0,0,0)",
+                          "0 0 30px rgba(255,0,0,0.6)",
+                          "0 0 0px rgba(255,0,0,0)"
+                        ]
                       }}
                       transition={{ 
-                        duration: 2, 
+                        duration: 0.6, 
                         repeat: Infinity,
-                        repeatType: "loop"
+                        repeatType: "loop",
+                        ease: "easeInOut"
                       }}
-                      className="w-full text-white text-lg md:text-xl font-black py-5 rounded-[2rem] transition-all flex items-center justify-center gap-3 shadow-[0_15px_40px_rgba(168,85,247,0.3)] border-4 border-white/20"
+                      className="w-full text-white text-xl md:text-2xl font-black py-6 rounded-[2rem] transition-all flex flex-col items-center justify-center gap-1 shadow-[0_15px_40px_rgba(255,0,0,0.3)] border-4 border-white/30"
                     >
-                      <ZaloIcon size={28} />
-                      ĐẶT XE QUA ZALO 👈
+                      <span>👉Click vào đây để đặt xe 🚗</span>
                     </motion.button>
                   </motion.div>
                 )}
