@@ -3,10 +3,25 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useEffect } from 'react';
-import { Phone, MapPin, Car, Menu, X, ChevronDown, MessageCircle, Search, Star } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Phone, MapPin, Car, Menu, X, ChevronDown, MessageCircle, Search, Star, Facebook, Instagram, Twitter } from 'lucide-react';
+import { motion, AnimatePresence, useScroll, useTransform } from 'motion/react';
+import { setOptions, importLibrary } from '@googlemaps/js-api-loader';
 import { locations } from './data/locations';
+
+const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || '';
+
+if (!GOOGLE_MAPS_API_KEY) {
+  console.warn("[Google Maps] VITE_GOOGLE_MAPS_API_KEY is missing. Please set it in your environment variables.");
+} else {
+  console.log("[Google Maps] API Key loaded:", GOOGLE_MAPS_API_KEY.substring(0, 4) + "..." + GOOGLE_MAPS_API_KEY.substring(GOOGLE_MAPS_API_KEY.length - 4));
+}
+
+(setOptions as any)({
+  apiKey: GOOGLE_MAPS_API_KEY,
+  version: "weekly",
+  libraries: ["places"]
+});
 
 const ZaloIcon = ({ size = 16, className = "" }: { size?: number; className?: string }) => (
   <img 
@@ -138,10 +153,138 @@ function LocationSelector({
   );
 }
 
+function MobileMenu({ onClose }: { onClose: () => void }) {
+  const menuRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    container: menuRef,
+  });
+
+  const bgY = useTransform(scrollYProgress, [0, 1], [0, -150]);
+  const bgRotate = useTransform(scrollYProgress, [0, 1], [0, 25]);
+  const bgScale = useTransform(scrollYProgress, [0, 1], [1, 1.2]);
+  
+  const luxuryTextY = useTransform(scrollYProgress, [0, 1], [0, 200]);
+  const luxuryTextOpacity = useTransform(scrollYProgress, [0, 0.5, 1], [0.03, 0.05, 0.02]);
+
+  return (
+    <motion.div 
+      ref={menuRef}
+      initial={{ opacity: 0, x: '100%' }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: '100%' }}
+      transition={{ type: "spring", damping: 25, stiffness: 200 }}
+      className="fixed inset-0 z-[60] bg-white overflow-y-auto md:hidden"
+    >
+      {/* Parallax Background Elements */}
+      <motion.div 
+        style={{ y: bgY, rotate: bgRotate, scale: bgScale }}
+        className="absolute top-[-10%] right-[-10%] w-96 h-96 bg-red-50 rounded-full blur-[100px] opacity-60 pointer-events-none"
+      />
+      <motion.div 
+        style={{ y: useTransform(scrollYProgress, [0, 1], [0, 250]), rotate: -15 }}
+        className="absolute bottom-[5%] left-[-10%] w-72 h-72 bg-blue-50 rounded-full blur-[80px] opacity-40 pointer-events-none"
+      />
+      
+      {/* Floating Decorative Text */}
+      <motion.div
+        style={{ y: luxuryTextY, opacity: luxuryTextOpacity }}
+        className="absolute inset-0 flex items-center justify-center pointer-events-none select-none"
+      >
+        <span className="text-[15vw] font-black text-slate-900 uppercase tracking-tighter whitespace-nowrap">
+          LUXURY SERVICE
+        </span>
+      </motion.div>
+
+      <div className="relative min-h-screen pt-24 pb-12 px-8 flex flex-col">
+        <div className="flex justify-between items-center mb-12">
+          <div className="flex items-center gap-2">
+            <div className="bg-red-600 p-1 rounded-lg">
+              <Car className="text-white w-5 h-5" />
+            </div>
+            <div>
+              <h1 className="text-lg font-extrabold tracking-tighter text-slate-900 leading-none">
+                NGUYỄN VY
+              </h1>
+              <p className="text-[8px] font-bold text-red-600 tracking-widest uppercase">Luxury Service</p>
+            </div>
+          </div>
+          <button 
+            onClick={onClose}
+            className="p-2 bg-slate-100 rounded-full text-slate-900"
+          >
+            <X size={24} />
+          </button>
+        </div>
+
+        <nav className="flex flex-col gap-8">
+          {[
+            { href: "#", label: "Trang chủ", icon: null },
+            { href: "#booking", label: "Đặt xe", icon: null },
+            { href: "tel:0937243749", label: "0937 243 749", icon: <Phone size={20} fill="currentColor" />, color: "text-red-600" },
+            { href: "https://zalo.me/0937243749", label: "Chat Zalo", icon: <ZaloIcon size={24} />, color: "text-blue-600" },
+            { href: "https://www.facebook.com/Nguyenvyfamily", label: "Facebook", icon: <FacebookIcon size={24} />, color: "text-blue-800" },
+            { href: "https://line.me/ti/p/QeBK3LeCL6", label: "Line", icon: <LineIcon size={24} />, color: "text-green-600" },
+          ].map((item, index) => {
+            // Create unique parallax movement for each item with subtle 3D rotation
+            const itemY = useTransform(scrollYProgress, [0, 1], [0, (index + 1) * -35]);
+            const itemRotateX = useTransform(scrollYProgress, [0, 1], [0, index % 2 === 0 ? 10 : -10]);
+            const itemScale = useTransform(scrollYProgress, [0, 0.5, 1], [1, 1.05, 0.95]);
+            const itemOpacity = useTransform(scrollYProgress, [0, 0.8, 1], [1, 0.9, 0.4]);
+            
+            return (
+              <motion.a
+                key={index}
+                href={item.href}
+                style={{ 
+                  y: itemY, 
+                  opacity: itemOpacity, 
+                  rotateX: itemRotateX,
+                  scale: itemScale,
+                  perspective: 1000
+                }}
+                onClick={onClose}
+                initial={{ opacity: 0, x: 40, rotateY: 20 }}
+                animate={{ opacity: 1, x: 0, rotateY: 0 }}
+                transition={{ 
+                  type: "spring",
+                  damping: 20,
+                  stiffness: 100,
+                  delay: index * 0.08 
+                }}
+                className={`text-3xl font-black flex items-center gap-5 py-2 ${item.color || "text-slate-900"} hover:translate-x-2 transition-transform`}
+              >
+                <div className="flex-shrink-0 w-10 h-10 flex items-center justify-center">
+                  {item.icon}
+                </div>
+                {item.label}
+              </motion.a>
+            );
+          })}
+        </nav>
+
+        <div className="mt-auto pt-12">
+          <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-4">Kết nối với chúng tôi</p>
+          <div className="flex gap-4">
+            <a href="#" className="w-10 h-10 bg-slate-100 rounded-full flex items-center justify-center text-slate-600 hover:bg-red-600 hover:text-white transition-all">
+              <Facebook size={20} />
+            </a>
+            <a href="#" className="w-10 h-10 bg-slate-100 rounded-full flex items-center justify-center text-slate-600 hover:bg-red-600 hover:text-white transition-all">
+              <Instagram size={20} />
+            </a>
+            <a href="#" className="w-10 h-10 bg-slate-100 rounded-full flex items-center justify-center text-slate-600 hover:bg-red-600 hover:text-white transition-all">
+              <Twitter size={20} />
+            </a>
+          </div>
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
 export default function App() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
+  
   const [phone, setPhone] = useState('');
   const [distance, setDistance] = useState<string>('');
   const [pickup, setPickup] = useState({ province: '', district: '', ward: '' });
@@ -155,59 +298,44 @@ export default function App() {
     roundedPrice: number;
   } | null>(null);
 
-  const getCoordinates = async (address: string, fallbackAddress?: string): Promise<[number, number] | null> => {
-    console.log(`[Geocode] Đang tìm tọa độ cho: "${address}"`);
-    const fetchCoords = async (addr: string) => {
-      try {
-        const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(addr)}&limit=1`, {
-          headers: {
-            'User-Agent': 'NguyenVyLuxuryBookingApp/1.0'
-          }
-        });
-        const data = await response.json();
-        if (data && data.length > 0) {
-          console.log(`[Geocode] Thành công: "${addr}" -> [${data[0].lat}, ${data[0].lon}]`);
-          return [parseFloat(data[0].lat), parseFloat(data[0].lon)] as [number, number];
-        }
-        console.warn(`[Geocode] Không tìm thấy kết quả cho: "${addr}"`);
-        return null;
-      } catch (err) {
-        console.error(`[Geocode] Lỗi API cho "${addr}":`, err);
-        return null;
-      }
-    };
-
-    const variations = [
-      address,
-      address.replace(/^(Phường|Xã)\s+/i, ''), // Thử bỏ tiền tố Phường/Xã
-      fallbackAddress
-    ].filter((v, i, a) => v && a.indexOf(v) === i) as string[];
-
-    for (const addr of variations) {
-      const coords = await fetchCoords(addr);
-      if (coords) return coords;
+  const getRouteDistance = async (origin: string, destination: string): Promise<number | null> => {
+    console.log(`[Google Maps] Đang tìm tuyến đường giữa: "${origin}" và "${destination}"`);
+    
+    if (!GOOGLE_MAPS_API_KEY) {
+      console.error("[Google Maps] Thiếu API Key");
+      return null;
     }
 
-    return null;
-  };
-
-  const getRouteDistance = async (start: [number, number], end: [number, number]): Promise<number | null> => {
-    console.log(`[Routing] Đang tìm tuyến đường giữa: [${start}] và [${end}]`);
     try {
-      const response = await fetch(`https://router.project-osrm.org/route/v1/driving/${start[1]},${start[0]};${end[1]},${end[0]}?overview=false`, {
-        headers: {
-          'User-Agent': 'NguyenVyLuxuryBookingApp/1.0'
-        }
+      const { DirectionsService } = await importLibrary("routes") as google.maps.RoutesLibrary;
+      const directionsService = new DirectionsService();
+      
+      const result = await directionsService.route({
+        origin: origin,
+        destination: destination,
+        travelMode: google.maps.TravelMode.DRIVING,
       });
-      const data = await response.json();
-      if (data.code === 'Ok' && data.routes && data.routes.length > 0) {
-        console.log(`[Routing] Thành công: ${data.routes[0].distance} mét`);
-        return data.routes[0].distance; // in meters
+
+      if (result.routes && result.routes.length > 0 && result.routes[0].legs.length > 0) {
+        const distanceMeters = result.routes[0].legs[0].distance?.value;
+        if (distanceMeters !== undefined) {
+          console.log(`[Google Maps] Thành công: ${distanceMeters} mét`);
+          return distanceMeters;
+        }
       }
-      console.error(`[Routing] Thất bại: ${data.code}`, data);
       return null;
-    } catch (err) {
-      console.error("[Routing] Lỗi API:", err);
+    } catch (err: any) {
+      console.error("[Google Maps] Lỗi Directions API:", err);
+      
+      // Check for specific Google Maps API errors
+      const errorMessage = err.message || String(err);
+      if (errorMessage.includes('REQUEST_DENIED')) {
+        if (errorMessage.includes('API key')) {
+          throw new Error("Google Maps API Key không hợp lệ hoặc thiếu. Vui lòng kiểm tra lại cấu hình VITE_GOOGLE_MAPS_API_KEY.");
+        }
+        throw new Error("Google Maps Directions API bị từ chối (REQUEST_DENIED). Vui lòng: 1. Bật 'Directions API' trong Google Cloud Console. 2. Kiểm tra giới hạn API Key (HTTP referrers). 3. Đảm bảo đã liên kết tài khoản thanh toán (Billing).");
+      }
+      
       return null;
     }
   };
@@ -401,23 +529,30 @@ export default function App() {
     const destFallback = `${normalizeDistrictName(destination.district, destination.province)}, ${destination.province.replace(/^TP\.\s*/, 'Thành phố ')}, Việt Nam`;
 
     try {
-      const startCoords = await getCoordinates(pickupAddr, pickupFallback);
-      if (!startCoords) {
-        setError(`Không tìm thấy vị trí điểm đón: "${pickupAddr}". Vui lòng thử chọn địa danh lân cận hoặc kiểm tra lại.`);
+      if (!GOOGLE_MAPS_API_KEY) {
+        setError("Hệ thống chưa được cấu hình Google Maps API Key. Vui lòng thêm VITE_GOOGLE_MAPS_API_KEY vào biến môi trường.");
         setIsLoading(false);
         return;
       }
 
-      const endCoords = await getCoordinates(destAddr, destFallback);
-      if (!endCoords) {
-        setError(`Không tìm thấy vị trí điểm đến: "${destAddr}". Vui lòng thử chọn địa danh lân cận hoặc kiểm tra lại.`);
+      let distInMeters: number | null = null;
+      
+      try {
+        distInMeters = await getRouteDistance(pickupAddr, destAddr);
+        
+        // If direct route fails, try with fallbacks
+        if (distInMeters === null) {
+          console.log("[Google Maps] Thử lại với địa chỉ fallback...");
+          distInMeters = await getRouteDistance(pickupFallback, destFallback);
+        }
+      } catch (routeErr: any) {
+        setError(routeErr.message || "Đã có lỗi xảy ra khi kết nối với Google Maps.");
         setIsLoading(false);
         return;
       }
 
-      const distInMeters = await getRouteDistance(startCoords, endCoords);
       if (distInMeters === null) {
-        setError("Lỗi tính toán tuyến đường: Không thể tìm thấy đường đi giữa hai địa điểm này. Có thể do khoảng cách quá xa hoặc địa hình không phù hợp.");
+        setError("Google Maps không thể tìm thấy tuyến đường giữa hai địa điểm này. Vui lòng kiểm tra lại địa chỉ hoặc chọn địa danh lân cận.");
         setIsLoading(false);
         return;
       }
@@ -433,7 +568,7 @@ export default function App() {
       });
     } catch (err) {
       console.error("Estimation error:", err);
-      setError("Đã có lỗi xảy ra trong quá trình tính toán. Vui lòng thử lại sau.");
+      setError("Đã có lỗi xảy ra khi kết nối với Google Maps. Vui lòng thử lại sau.");
     } finally {
       setIsLoading(false);
     }
@@ -512,29 +647,7 @@ export default function App() {
       {/* Mobile Menu */}
       <AnimatePresence>
         {mobileMenuOpen && (
-          <motion.div 
-            initial={{ opacity: 0, x: '100%' }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: '100%' }}
-            className="fixed inset-0 z-40 bg-white pt-24 px-6 md:hidden"
-          >
-            <nav className="flex flex-col gap-6 text-xl font-bold">
-              <a href="#" onClick={() => setMobileMenuOpen(false)}>Trang chủ</a>
-              <a href="#booking" onClick={() => setMobileMenuOpen(false)}>Đặt xe</a>
-              <a href="tel:0937243749" className="text-red-600 flex items-center gap-2">
-                <Phone fill="currentColor" /> 0937 243 749
-              </a>
-              <a href="https://zalo.me/0937243749" target="_blank" className="text-blue-600 flex items-center gap-2">
-                <ZaloIcon size={32} /> Chat Zalo
-              </a>
-              <a href="https://www.facebook.com/Nguyenvyfamily" target="_blank" className="text-blue-800 flex items-center gap-2">
-                <FacebookIcon size={32} /> Facebook
-              </a>
-              <a href="https://line.me/ti/p/QeBK3LeCL6" target="_blank" className="text-green-600 flex items-center gap-2">
-                <LineIcon size={32} /> Line
-              </a>
-            </nav>
-          </motion.div>
+          <MobileMenu onClose={() => setMobileMenuOpen(false)} />
         )}
       </AnimatePresence>
 
